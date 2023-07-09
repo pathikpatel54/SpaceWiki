@@ -51,4 +51,23 @@ func ensureTablesExist(db *sql.DB) {
 	if err != nil {
 		log.Fatalf("Could not create sessions table: %v", err)
 	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS api_data (
+		id SERIAL PRIMARY KEY,
+		launches JSONB,
+		events JSONB,
+		agencies JSONB,
+		astronauts JSONB,
+		space_stations JSONB,
+		expeditions JSONB,
+		docking_event JSONB,
+		launch_vehicles JSONB,
+		spacecraft JSONB,
+		locations JSONB,
+		pads JSONB
+	);`)
+
+	if err != nil {
+		log.Fatalf("Could not create api_data table: %v", err)
+	}
 }
