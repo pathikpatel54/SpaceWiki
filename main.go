@@ -28,8 +28,7 @@ func main() {
 	router.GET("/api/user", ac.User)
 	router.GET("/api/logout", ac.Logout)
 
-	
-	router.GET("/launches/upcoming", sc.GetUpcomingLaunches)
+	router.GET("/launches", sc.GetUpcomingLaunches)
 	router.GET("/events", sc.GetEvents)
 	router.GET("/agencies", sc.GetAgencies)
 	router.GET("/astronauts", sc.GetAstronauts)

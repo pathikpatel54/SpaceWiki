@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -66,6 +67,11 @@ func (sc *SpaceController) GetPads(c *gin.Context) {
 }
 
 func (sc *SpaceController) getData(c *gin.Context, columnName string) {
+	if ok, _ := isLoggedIn(c, sc.db); !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
 	var jsonData []byte
 
 	err := sc.db.QueryRowContext(sc.ctx, "SELECT "+columnName+" FROM api_data WHERE id = 1").Scan(&jsonData)
