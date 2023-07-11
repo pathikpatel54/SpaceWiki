@@ -35,6 +35,8 @@ func updateAPIData(db *sql.DB, apiURL string, columnName string) {
 		}
 	}
 
+	log.Println(len(results))
+
 	newBody, err := json.Marshal(results)
 	if err != nil {
 		log.Printf("Failed to re-marshal updated JSON: %v", err)
@@ -104,15 +106,15 @@ func LaunchDataFetcher(db *sql.DB) {
 		"space_stations":  "https://ll.thespacedevs.com/2.2.0/spacestation/?format=json&limit=100&mode=detailed",
 		"expeditions":     "https://ll.thespacedevs.com/2.2.0/expedition/?format=json&limit=100&mode=detailed",
 		"docking_event":   "https://ll.thespacedevs.com/2.2.0/docking_event/?format=json&limit=100&mode=detailed",
-		"launch_vehicles": "https://ll.thespacedevs.com/2.2.0/launcher/?format=json&limit=100&mode=detailed",
+		"launch_vehicles": "https://ll.thespacedevs.com/2.2.0/config/launcher/?format=json&limit=100&mode=detailed",
 		"spacecraft":      "https://ll.thespacedevs.com/2.2.0/spacecraft/?format=json&limit=100&mode=detailed",
 		"locations":       "https://ll.thespacedevs.com/2.2.0/location/?format=json&limit=100&mode=detailed",
 		"pads":            "https://ll.thespacedevs.com/2.2.0/pad/?format=json&limit=100&mode=detailed",
 	}
 
 	for column := range apiMap {
-		if column == "launches" || column == "events" {
-			tickers[column] = time.NewTicker(15 * time.Minute) // Update every 15 minutes
+		if column == "launch_vehicles" {
+			tickers[column] = time.NewTicker(1 * time.Minute) // Update every 15 minutes
 		} else {
 			tickers[column] = time.NewTicker(24 * time.Hour) // Update every 24 hours
 		}
