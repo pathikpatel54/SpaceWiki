@@ -35,8 +35,6 @@ func updateAPIData(db *sql.DB, apiURL string, columnName string) {
 		}
 	}
 
-	log.Println(len(results))
-
 	newBody, err := json.Marshal(results)
 	if err != nil {
 		log.Printf("Failed to re-marshal updated JSON: %v", err)
@@ -113,8 +111,8 @@ func LaunchDataFetcher(db *sql.DB) {
 	}
 
 	for column := range apiMap {
-		if column == "launch_vehicles" {
-			tickers[column] = time.NewTicker(1 * time.Minute) // Update every 15 minutes
+		if column == "launches" || column == "events" {
+			tickers[column] = time.NewTicker(60 * time.Minute) // Update every 15 minutes
 		} else {
 			tickers[column] = time.NewTicker(24 * time.Hour) // Update every 24 hours
 		}

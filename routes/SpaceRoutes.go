@@ -83,7 +83,9 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
 	                       jsonb_array_elements(api_data.launches) AS elem
-	                  WHERE lower(elem->>'name') LIKE lower($1)`
+	                  WHERE lower(elem->>'name') LIKE lower($1) 
+					  OR lower(elem->'launch_service_provider'->>'name') LIKE lower($1)
+					  OR lower(elem->'launch_service_provider'->>'abbrev') LIKE lower($1)`
 		case "events":
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
@@ -93,7 +95,8 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 			query = `SELECT jsonb_agg(elem)
 					FROM api_data,
 						jsonb_array_elements(api_data.agencies) AS elem
-					WHERE lower(elem->>'abbrev') LIKE lower($1) OR lower(elem->>'name') LIKE lower($1)`
+					WHERE lower(elem->>'abbrev') LIKE lower($1) OR lower(elem->>'name') LIKE lower($1)
+						OR lower(elem->>'country_code') LIKE lower($1)`
 		case "astronauts":
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
@@ -113,11 +116,10 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 			query = `SELECT jsonb_agg(elem)
 					FROM api_data,
 						jsonb_array_elements(api_data.launch_vehicles) AS elem
-					WHERE lower(elem->'launcher_config'->>'name') LIKE lower($1)
-						OR lower(elem->'launcher_config'->'manufacturer'->>'name') LIKE lower($1)
-						OR lower(elem->'launcher_config'->'manufacturer'->>'abbrev') LIKE lower($1)`
+					WHERE lower(elem->>'name') LIKE lower($1)
+						OR lower(elem->'manufacturer'->>'name') LIKE lower($1)
+						OR lower(elem->'manufacturer'->>'abbrev') LIKE lower($1)`
 		case "spacecraft":
-
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
 	                       jsonb_array_elements(api_data.spacecraft) AS elem,
