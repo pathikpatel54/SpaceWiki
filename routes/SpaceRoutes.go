@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"spacealert/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -77,6 +79,8 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 	var err error
 
 	keyword := c.Query("keyword")
+	country := c.Query("country")
+
 	if keyword != "" {
 		switch columnName {
 		case "launches":
@@ -111,7 +115,7 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
 	                       jsonb_array_elements(api_data.expeditions) AS elem
-	                  WHERE lower(elem->>'name') LIKE lower($1)`
+	                  WHERE lower(elem->>'name') LIKE lower($1) OR lower(elem->'spacestation'->>'name') LIKE lower($1)`
 		case "launch_vehicles":
 			query = `SELECT jsonb_agg(elem)
 					FROM api_data,
@@ -122,24 +126,33 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 		case "spacecraft":
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
-	                       jsonb_array_elements(api_data.spacecraft) AS elem,
-	                       jsonb_array_elements_text(elem->'spacecraft_config') AS spacecraft_config
-	                  WHERE lower(elem->>'name') LIKE lower($1)
-	                         OR lower(spacecraft_config->'agency'->>'name') LIKE lower($1)
-	                         OR lower(spacecraft_config->'agency'->>'abbrev') LIKE lower($1)`
+	                       jsonb_array_elements(api_data.spacecraft) AS elem
+						   WHERE lower(elem->>'name') LIKE lower($1)
+	                         OR lower(elem->'spacecraft_config'->'agency'->>'name') LIKE lower($1)
+	                         OR lower(elem->'spacecraft_config'->'agency'->>'abbrev') LIKE lower($1)`
 		case "pads":
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
-	                       jsonb_array_elements(api_data.pads) AS elem,
-	                       jsonb_array_elements_text(elem->'location') AS location
-	                  WHERE lower(elem->>'name') LIKE lower($1)
-	                         OR lower(elem->>'country_code') LIKE lower($1)
-	                         OR lower(location->>'name') LIKE lower($1)`
+	                       jsonb_array_elements(api_data.pads) AS elem
+						WHERE lower(elem->>'name') LIKE lower($1)
+								OR lower(elem->>'country_code') LIKE lower($1)
+								OR lower(elem->'location'->>'name') LIKE lower($1)`
 		default:
 			query = "SELECT " + columnName + " FROM api_data WHERE id = 1"
 		}
 
 		rows, err = sc.db.Query(query, "%"+keyword+"%")
+	} else if country != "" {
+		switch columnName {
+		case "agencies":
+			query = `SELECT jsonb_agg(elem)
+					FROM api_data,
+						jsonb_array_elements(api_data.agencies) AS elem
+					WHERE lower(elem->>'country_code') LIKE lower($1)`
+		default:
+			query = "SELECT " + columnName + " FROM api_data WHERE id = 1"
+		}
+		rows, err = sc.db.Query(query, "%"+country+"%")
 	} else {
 		query = "SELECT " + columnName + " FROM api_data WHERE id = 1"
 		rows, err = sc.db.Query(query)
@@ -163,3 +176,118 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 
 	c.JSON(200, result)
 }
+
+func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
+	var request models.Subscription
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check if subscription with the same Launch ID exists
+	var subscriptionID int
+	var usersStr string
+	err := c.db.QueryRowContext(c.ctx, "SELECT id, users FROM subscriptions WHERE launch_id = $1", request.LaunchID).Scan(&subscriptionID, &usersStr)
+	if err != nil && err != sql.ErrNoRows {
+		log.Println("Error checking existing subscription:", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing subscription"})
+		return
+	}
+
+	// If subscription exists, check if user already exists in the users array
+	if err == nil {
+		exists := false
+		users := strings.Split(usersStr[1:len(usersStr)-1], ",") // Convert string to []string
+		for _, user := range users {
+			if user == request.Users[0] {
+				exists = true
+				break
+			}
+		}
+
+		if exists {
+			ctx.JSON(http.StatusOK, gin.H{"message": "User already exists in the subscription"})
+			return
+		}
+
+		_, err := c.db.ExecContext(c.ctx, "UPDATE subscriptions SET users = array_append(users, $1) WHERE id = $2", request.Users[0], subscriptionID)
+		if err != nil {
+			log.Println("Error updating existing subscription:", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update existing subscription"})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"message": "User added to existing subscription"})
+		return
+	}
+
+	// If subscription does not exist, create a new subscription record
+	var statusID int
+	err = c.db.QueryRowContext(c.ctx, "SELECT id FROM statuses WHERE name = $1", request.Status.Name).Scan(&statusID)
+	if err != nil && err != sql.ErrNoRows {
+		log.Println("Error checking existing status:", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing status"})
+		return
+	}
+
+	if err == sql.ErrNoRows {
+		err = c.db.QueryRowContext(c.ctx, "INSERT INTO statuses (name, abbrev, description) VALUES ($1, $2, $3) RETURNING id", request.Status.Name, request.Status.Abbrev, request.Status.Description).Scan(&statusID)
+		if err != nil {
+			log.Println("Error creating new status:", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new status"})
+			return
+		}
+	}
+
+	// Convert []string to PostgreSQL array representation
+	usersArray := "{" + strings.Join(request.Users, ",") + "}"
+
+	_, err = c.db.ExecContext(c.ctx, "INSERT INTO subscriptions (users, launch_id, status_id) VALUES ($1, $2, $3)", usersArray, request.LaunchID, statusID)
+	if err != nil {
+		log.Println("Error creating new subscription:", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new subscription"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "New subscription created"})
+}
+
+func (c *SpaceController) Unsubscribe(ctx *gin.Context) {
+	launchID := ctx.Param("id")
+
+	// Check if the user is logged in
+	if ok, email := isLoggedIn(ctx, c.db); !ok {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	} else {
+		// Check if the user is the last one in the subscription
+		var userCount int
+		err := c.db.QueryRowContext(c.ctx, "SELECT array_length(users, 1) FROM subscriptions WHERE launch_id = $1", launchID).Scan(&userCount)
+		if err != nil {
+			log.Println("Error checking user count in subscription:", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unsubscribe"})
+			return
+		}
+
+		if userCount == 1 {
+			// If the user is the last one, delete the entire row
+			_, err = c.db.ExecContext(c.ctx, "DELETE FROM subscriptions WHERE launch_id = $1", launchID)
+			if err != nil {
+				log.Println("Error unsubscribing:", err)
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unsubscribe"})
+				return
+			}
+		} else {
+			// If the user is not the last one, remove the user from the subscription
+			_, err = c.db.ExecContext(c.ctx, "UPDATE subscriptions SET users = array_remove(users, $1) WHERE launch_id = $2", email.Email, launchID)
+			if err != nil {
+				log.Println("Error removing user from subscription:", err)
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unsubscribe"})
+				return
+			}
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"message": "Unsubscribed successfully"})
+	}
+}
+

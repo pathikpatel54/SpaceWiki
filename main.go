@@ -18,6 +18,7 @@ func main() {
 	}
 
 	go schedulers.LaunchDataFetcher(db)
+	go schedulers.CheckLaunches(db)
 
 	ac := routes.NewAuthController(db)
 	sc := routes.NewSpaceController(db)
@@ -39,6 +40,8 @@ func main() {
 	router.GET("/spacecraft", sc.GetSpacecraft)
 	router.GET("/locations", sc.GetLocations)
 	router.GET("/pads", sc.GetPads)
+	router.POST("/subscriptions", sc.CreateSubscription)
+	router.DELETE("/subscriptions/:id", sc.Unsubscribe)
 
 	router.Run()
 }

@@ -70,4 +70,26 @@ func ensureTablesExist(db *sql.DB) {
 	if err != nil {
 		log.Fatalf("Could not create api_data table: %v", err)
 	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS statuses (
+		id SERIAL PRIMARY KEY,
+		name VARCHAR(255),
+		abbrev VARCHAR(255),
+		description TEXT
+	);`)
+
+	if err != nil {
+		log.Fatalf("Could not create api_data table: %v", err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS subscriptions (
+		id SERIAL PRIMARY KEY,
+		users TEXT[],
+		launch_id VARCHAR(255),
+		status_id INTEGER REFERENCES statuses(id)
+	);`)
+
+	if err != nil {
+		log.Fatalf("Could not create api_data table: %v", err)
+	}
 }
