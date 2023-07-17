@@ -176,7 +176,6 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 
 	c.JSON(200, result)
 }
-
 func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
 	var request models.Subscription
 	if err := ctx.ShouldBindJSON(&request); err != nil {
@@ -221,20 +220,30 @@ func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
 		return
 	}
 
-	// If subscription does not exist, create a new subscription record
+	// Check if status exists
 	var statusID int
 	err = c.db.QueryRowContext(c.ctx, "SELECT id FROM statuses WHERE name = $1", request.Status.Name).Scan(&statusID)
-	if err != nil && err != sql.ErrNoRows {
-		log.Println("Error checking existing status:", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing status"})
-		return
-	}
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Println("Error checking existing status:", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing status"})
+			return
+		}
 
-	if err == sql.ErrNoRows {
-		err = c.db.QueryRowContext(c.ctx, "INSERT INTO statuses (name, abbrev, description) VALUES ($1, $2, $3) RETURNING id", request.Status.Name, request.Status.Abbrev, request.Status.Description).Scan(&statusID)
+		// Create new status
+		_, err = c.db.ExecContext(c.ctx, "INSERT INTO statuses (id, name, abbrev, description) VALUES ($1, $2, $3, $4)",
+			request.Status.ID, request.Status.Name, request.Status.Abbrev, request.Status.Description)
 		if err != nil {
 			log.Println("Error creating new status:", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new status"})
+			return
+		}
+
+		// Get the newly created status ID
+		err = c.db.QueryRowContext(c.ctx, "SELECT id FROM statuses WHERE name = $1", request.Status.Name).Scan(&statusID)
+		if err != nil {
+			log.Println("Error retrieving newly created status ID:", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve newly created status ID"})
 			return
 		}
 	}
@@ -242,7 +251,9 @@ func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
 	// Convert []string to PostgreSQL array representation
 	usersArray := "{" + strings.Join(request.Users, ",") + "}"
 
-	_, err = c.db.ExecContext(c.ctx, "INSERT INTO subscriptions (users, launch_id, status_id) VALUES ($1, $2, $3)", usersArray, request.LaunchID, statusID)
+	// Create new subscription
+	_, err = c.db.ExecContext(c.ctx, "INSERT INTO subscriptions (users, launch_id, status_id) VALUES ($1, $2, $3)",
+		usersArray, request.LaunchID, statusID)
 	if err != nil {
 		log.Println("Error creating new subscription:", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new subscription"})
@@ -290,4 +301,3 @@ func (c *SpaceController) Unsubscribe(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "Unsubscribed successfully"})
 	}
 }
-

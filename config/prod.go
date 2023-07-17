@@ -9,4 +9,5 @@ var prodConfig = models.Key{
 	PostGresURL:        os.Getenv("POSTGRES_URL"),
 	GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 	GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+	SparkPostKey:       os.Getenv("SPARK_POST_KEY"),
 }

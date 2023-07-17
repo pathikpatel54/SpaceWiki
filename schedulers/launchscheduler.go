@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"spacealert/models"
+	"spacealert/utils"
 	"strings"
 	"time"
 )
@@ -22,6 +23,7 @@ func CheckLaunches(db *sql.DB) {
 		rows, err := db.Query(query)
 		if err != nil {
 			log.Println(err)
+			continue
 		}
 
 		// Iterate over the rows
@@ -37,6 +39,7 @@ func CheckLaunches(db *sql.DB) {
 			err := rows.Scan(&users, &launchID, &statusID, &statusName, &statusAbbrev, &statusDesc)
 			if err != nil {
 				log.Println(err)
+				continue
 			}
 
 			// Create a new Subscription instance
@@ -65,24 +68,54 @@ func CheckLaunches(db *sql.DB) {
 			var jsonResult string
 			err = row.Scan(&jsonResult)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				continue
 			}
 
 			// Unmarshal the JSON result into a map[string]interface{}
 			var result map[string]interface{}
 			err = json.Unmarshal([]byte(jsonResult), &result)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				continue
 			}
+			resultStatus := result["status"].(map[string]interface{})
+			if resultStatus["name"].(string) != subscription.Status.Name {
+				var existingStatusID int
+				err = db.QueryRow("SELECT id FROM statuses WHERE id = $1", int(resultStatus["id"].(float64))).Scan(&existingStatusID)
+				if err != nil {
+					if err != sql.ErrNoRows {
+						log.Println(err)
+						continue
+					}
 
-			if result["status"].(map[string]interface{})["name"].(string) == subscription.Status.Name {
-				log.Println("Hey Bro")
-			} else {
-				for _, user := range subscription.Users {
-					log.Println(user)
+					// Status does not exist, insert a new record into the statuses table
+					_, err = db.Exec("INSERT INTO statuses (id, name, abbrev, description) VALUES ($1, $2, $3, $4)",
+						int(resultStatus["id"].(float64)), resultStatus["name"].(string), resultStatus["abbrev"].(string), resultStatus["description"].(string))
+					if err != nil {
+						log.Println(err)
+						continue
+					}
 				}
+
+				_, err = db.Exec("UPDATE subscriptions SET status_id = $1 WHERE launch_id = $2",
+					existingStatusID, subscription.LaunchID)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				email := &models.Email{
+					From: "spacealert@pathikpatel.me",
+					Recipients: subscription.Users,
+					Subject: "Test Email",
+					HTML: `<p>This is an example</p>`,
+				}
+				utils.SendEmail(email)
 			}
 		}
 		rows.Close()
 	}
+
+	ticker.Stop()
 }

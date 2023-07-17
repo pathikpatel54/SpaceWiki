@@ -72,7 +72,7 @@ func ensureTablesExist(db *sql.DB) {
 	}
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS statuses (
-		id SERIAL PRIMARY KEY,
+		id INTEGER PRIMARY KEY UNIQUE,
 		name VARCHAR(255),
 		abbrev VARCHAR(255),
 		description TEXT
