@@ -124,7 +124,7 @@ func CheckLaunches(db *sql.DB) {
 					data := launchData{
 						Name:               result["name"].(string),
 						Mission:            result["mission"].(map[string]interface{})["name"].(string),
-						Rocket:             result["rocket"].(map[string]interface{})["configuration"].(map[string]interface{})["name"].(string),
+						Rocket:             result["rocket"].(map[string]interface{})["configuration"].(map[string]interface{})["full_name"].(string),
 						LaunchTime:         parsedLaunchTime.Local(),
 						LaunchSite:         result["pad"].(map[string]interface{})["map_url"].(string),
 						MissionDescription: result["mission"].(map[string]interface{})["description"].(string),
@@ -144,7 +144,7 @@ func CheckLaunches(db *sql.DB) {
 					email := &models.Email{
 						From:       "spacealert@pathikpatel.me",
 						Recipients: subscription.Users,
-						Subject:    "SpaceWiki : Upcoming Launch Alert",
+						Subject:    `Upcoming Launch Alert | ` + data.Name,
 						HTML:       renderedTemplate.String(),
 					}
 					utils.SendEmail(email)
