@@ -116,7 +116,7 @@ func CheckLaunches(db *sql.DB) {
 					continue
 				}
 
-				if int(resultStatus["id"].(float64)) == 1 {
+				if int(resultStatus["id"].(float64)) == 1 && subscription.Status.ID == 2 {
 					parsedLaunchTime, err := time.Parse(time.RFC3339, result["window_start"].(string))
 					if err != nil {
 						log.Fatal("Error parsing time:", err)
@@ -125,7 +125,7 @@ func CheckLaunches(db *sql.DB) {
 						Name:               result["name"].(string),
 						Mission:            result["mission"].(map[string]interface{})["name"].(string),
 						Rocket:             result["rocket"].(map[string]interface{})["configuration"].(map[string]interface{})["name"].(string),
-						LaunchTime:         parsedLaunchTime,
+						LaunchTime:         parsedLaunchTime.Local(),
 						LaunchSite:         result["pad"].(map[string]interface{})["map_url"].(string),
 						MissionDescription: result["mission"].(map[string]interface{})["description"].(string),
 					}
