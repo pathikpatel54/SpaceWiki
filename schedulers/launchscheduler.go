@@ -1,6 +1,7 @@
 package schedulers
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -8,8 +9,18 @@ import (
 	"spacealert/models"
 	"spacealert/utils"
 	"strings"
+	"text/template"
 	"time"
 )
+
+type launchData struct {
+	Name               string
+	Mission            string
+	Rocket             string
+	LaunchTime         time.Time
+	LaunchSite         string
+	MissionDescription string
+}
 
 func CheckLaunches(db *sql.DB) {
 	ticker := time.NewTicker(time.Minute)
@@ -105,13 +116,39 @@ func CheckLaunches(db *sql.DB) {
 					continue
 				}
 
-				email := &models.Email{
-					From: "spacealert@pathikpatel.me",
-					Recipients: subscription.Users,
-					Subject: "Test Email",
-					HTML: `<p>This is an example</p>`,
+				if int(resultStatus["id"].(float64)) == 1 {
+					parsedLaunchTime, err := time.Parse(time.RFC3339, result["window_start"].(string))
+					if err != nil {
+						log.Fatal("Error parsing time:", err)
+					}
+					data := launchData{
+						Name:               result["name"].(string),
+						Mission:            result["mission"].(map[string]interface{})["name"].(string),
+						Rocket:             result["rocket"].(map[string]interface{})["configuration"].(map[string]interface{})["name"].(string),
+						LaunchTime:         parsedLaunchTime,
+						LaunchSite:         result["pad"].(map[string]interface{})["map_url"].(string),
+						MissionDescription: result["mission"].(map[string]interface{})["description"].(string),
+					}
+
+					launchTemplate, err := template.ParseFiles("templates/spacewiki.html")
+					if err != nil {
+						log.Fatal("Error parsing template:", err)
+					}
+
+					var renderedTemplate bytes.Buffer
+					err = launchTemplate.Execute(&renderedTemplate, data)
+					if err != nil {
+						log.Fatal("Error executing template:", err)
+					}
+
+					email := &models.Email{
+						From:       "spacealert@pathikpatel.me",
+						Recipients: subscription.Users,
+						Subject:    "SpaceWiki : Upcoming Launch Alert",
+						HTML:       renderedTemplate.String(),
+					}
+					utils.SendEmail(email)
 				}
-				utils.SendEmail(email)
 			}
 		}
 		rows.Close()
