@@ -9,11 +9,8 @@ import {
   Burger,
   rem,
   Text,
-  List,
   UnstyledButton,
   Avatar,
-  Transition,
-  Paper,
   Drawer,
   ScrollArea,
   Divider,
@@ -22,14 +19,9 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconBrandGoogle,
   IconChevronDown,
-  IconHeart,
   IconLogout,
-  IconMessage,
-  IconPlayerPause,
   IconSettings,
-  IconStar,
   IconSwitchHorizontal,
-  IconTrash,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -260,7 +252,7 @@ export default function HeaderAction() {
   return (
     <Header
       height={HEADER_HEIGHT}
-      mb={60}
+      mb={50}
       style={{ backgroundColor: "rgb(26, 27, 30)" }}
     >
       <Container className={classes.inner} fluid>

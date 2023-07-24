@@ -113,7 +113,7 @@ export default function HeroText() {
           </Text>{" "}
         </Title>
 
-        <Container p={0} size={600}>
+        <Container p={0} size={700}>
           <Text size="lg" color="dimmed" className={classes.description}>
             Discover captivating content, stay updated on the latest missions,
             and explore the wonders of the universe with stunning imagery that

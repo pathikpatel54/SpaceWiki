@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Container, Title, Text, Button, Avatar, Paper } from "@mantine/core";
+import { Container, Title, Text, Paper, Grid } from "@mantine/core";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLaunches, selectAllSpace } from "../features/auth/spaceSlice";
+import Cards from "./Cards";
 
 const links = [
   {
@@ -39,55 +42,40 @@ const links = [
 ];
 
 const LandingPage = ({ user }) => {
+  const dispatch = useDispatch();
+  const space = useSelector(selectAllSpace);
+
+  useEffect(() => {
+    dispatch(fetchLaunches());
+  }, []);
+
+  const { launches: upcomingLaunch } = space;
+
+  const renderLaunches = upcomingLaunch.slice(0, 6).map((launch) => {
+    return (
+      <Grid.Col xs={12} sm={6} md={4} lg={4} key={launch.id}>
+        <Cards
+          image={launch.image}
+          title={launch.name}
+          description={launch.net}
+        />
+      </Grid.Col>
+    );
+  });
+
   return (
     <Container size="md" style={{ textAlign: "center", padding: "2rem" }}>
-      <Avatar src={user.picture} alt={user.name} radius="xl" size={100} />
-      <Title>Welcome, {user.given_name}!</Title>
-      <Text size="lg">Explore the Wonders of the Cosmos</Text>
-      <Text>
-        Embark on a cosmic journey with Cosmic Exploration, where you can stay
-        updated with the latest space missions, celestial wonders, and more.
-      </Text>
-      <Button
-        component={Link}
-        to="/launches"
-        size="lg"
-        style={{ marginTop: "1rem" }}
-      >
-        Start Exploring
-      </Button>
+      <Title mb="md">Welcome, {user.name}!</Title>
+
       <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
         <Text size="lg" weight={500} style={{ marginBottom: "1rem" }}>
-          Quick Links
+          Upcoming Launches
         </Text>
-        <Button
-          component={Link}
-          to="/launches"
-          fullWidth
-          size="lg"
-          style={{ marginBottom: "0.5rem" }}
-        >
-          Launches
-        </Button>
-        <Button
-          component={Link}
-          to="/events"
-          fullWidth
-          size="lg"
-          style={{ marginBottom: "0.5rem" }}
-        >
-          Events
-        </Button>
-        <Button
-          component={Link}
-          to="/agencies"
-          fullWidth
-          size="lg"
-          style={{ marginBottom: "0.5rem" }}
-        >
-          Agencies
-        </Button>
-        {/* Add more links as needed */}
+        {upcomingLaunch ? (
+          <Grid> {renderLaunches}</Grid>
+        ) : (
+          <Text>No upcoming launches at the moment. Check back soon!</Text>
+        )}
       </Paper>
     </Container>
   );

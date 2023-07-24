@@ -3,17 +3,12 @@ import {
   Title,
   SimpleGrid,
   Text,
-  Button,
   ThemeIcon,
   Grid,
   Col,
   rem,
 } from "@mantine/core";
 import {
-  IconReceiptOff,
-  IconFlame,
-  IconCircleDotted,
-  IconFileCode,
   IconRocket,
   IconSatellite,
   IconPlanet,
