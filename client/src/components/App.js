@@ -5,9 +5,11 @@ import Header from "./Header";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAuth, selectAllAuth } from "../features/auth/authSlice";
 import { useEffect } from "react";
+import Landing from "./Landing";
 
 const App = () => {
   const dispatch = useDispatch();
+  const auth = useSelector(selectAllAuth);
 
   useEffect(() => {
     dispatch(fetchAuth());
@@ -15,14 +17,17 @@ const App = () => {
 
   return (
     <MantineProvider
-      theme={{ colorScheme: "dark" }}
+      theme={{ colorScheme: "dark", fontFamily: "Overpass" }}
       withGlobalStyles
       withNormalizeCSS
     >
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={auth?.email ? <Landing user={auth} /> : <Home />}
+          />
         </Routes>
       </BrowserRouter>
     </MantineProvider>
