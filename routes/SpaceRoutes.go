@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"spacealert/models"
@@ -308,4 +309,29 @@ func (c *SpaceController) GetLaunchID(ctx *gin.Context) {
 		return
 	}
 
+	launchID, ok := ctx.Params.Get("id")
+
+	if !ok {
+		ctx.String(http.StatusBadRequest, "")
+		return
+	}
+
+	query := fmt.Sprintf(`
+	SELECT launch FROM api_data, 
+	jsonb_array_elements(api_data.launches) AS launch
+	WHERE (launch->>'id') = '%s';`, launchID)
+
+	// Execute the query
+	row := c.db.QueryRow(query)
+
+	// Scan the result into a string
+	var jsonResult string
+	err := row.Scan(&jsonResult)
+	if err != nil {
+		log.Println(err)
+		ctx.String(http.StatusNotFound, "")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, jsonResult)
 }
