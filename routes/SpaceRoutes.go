@@ -325,11 +325,10 @@ func (c *SpaceController) GetLaunchID(ctx *gin.Context) {
 	row := c.db.QueryRow(query)
 
 	// Scan the result into a string
-	var jsonResult string
-	err := row.Scan(&jsonResult)
-	if err != nil {
-		log.Println(err)
-		ctx.String(http.StatusNotFound, "")
+	var jsonResult json.RawMessage
+	if err := row.Scan(&jsonResult); err != nil {
+		log.Printf("Failed to scan row: %v", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch data"})
 		return
 	}
 
