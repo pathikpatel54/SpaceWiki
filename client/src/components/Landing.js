@@ -32,7 +32,7 @@ const LandingPage = ({ user }) => {
   const renderLaunches = upcomingLaunch?.slice(0, 6).map((launch) => {
     return (
       <Grid.Col xs={12} sm={6} md={4} lg={4} key={launch.id}>
-        <Link to={`/lunches/${launch.id}`} style={{ textDecoration: "none" }}>
+        <Link to={`/launches/${launch.id}`} style={{ textDecoration: "none" }}>
           <Cards image={launch.image} title={launch.name} time={launch.net} />
         </Link>
       </Grid.Col>

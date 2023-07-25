@@ -187,7 +187,8 @@ export default function HeaderAction() {
     if (path.pathname.slice(-1) == "/") {
       setActive(path.pathname.slice(0, -1));
     } else {
-      setActive(path.pathname);
+      const rootpath = path.pathname.split("/")[1];
+      setActive("/" + rootpath);
     }
   }, [path]);
 
