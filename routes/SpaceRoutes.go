@@ -301,3 +301,12 @@ func (c *SpaceController) Unsubscribe(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "Unsubscribed successfully"})
 	}
 }
+
+func (c *SpaceController) GetLaunchID(ctx *gin.Context) {
+	if logged, _ := isLoggedIn(ctx, c.db); !logged {
+		ctx.String(http.StatusUnauthorized, "")
+		return
+	}
+
+	
+}

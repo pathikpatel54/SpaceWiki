@@ -1,4 +1,12 @@
-import { createStyles, Card, Image, Text, Group, rem } from "@mantine/core";
+import {
+  createStyles,
+  Card,
+  Image,
+  Text,
+  Group,
+  rem,
+  Flex,
+} from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -14,14 +22,9 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
     }`,
   },
-
-  title: {
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-    margin: "auto",
-  },
 }));
 
-export default function Cards({ image, title }) {
+export default function Cards({ image, title, time }) {
   const { classes } = useStyles();
 
   return (
@@ -29,11 +32,14 @@ export default function Cards({ image, title }) {
       <Card.Section>
         <Image src={image} alt={title} height={300} />
       </Card.Section>
-      <Group position="apart" mt="xs">
-        <Text fz="sm" fw={700} className={classes.title} h={40}>
+      <Flex h={85} gap={5} justify="center" align="center" direction="column">
+        <Text fz="sm" fw={700} mt={0}>
           {title}
         </Text>
-      </Group>
+        <Text fz="sm" fw={400} mt={0}>
+          Time: {new Date(time).toLocaleString()}
+        </Text>
+      </Flex>
     </Card>
   );
 }
