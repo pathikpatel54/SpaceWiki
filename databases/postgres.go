@@ -55,6 +55,7 @@ func ensureTablesExist(db *sql.DB) {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS api_data (
 		id SERIAL PRIMARY KEY,
 		launches JSONB,
+		previous_launches JSONB,
 		events JSONB,
 		agencies JSONB,
 		astronauts JSONB,

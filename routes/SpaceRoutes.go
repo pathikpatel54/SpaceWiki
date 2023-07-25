@@ -29,6 +29,10 @@ func (sc *SpaceController) GetUpcomingLaunches(c *gin.Context) {
 	sc.getData(c, "launches")
 }
 
+func (sc *SpaceController) GetPreviousLaunches(c *gin.Context) {
+	sc.getData(c, "previous_launches")
+}
+
 func (sc *SpaceController) GetEvents(c *gin.Context) {
 	sc.getData(c, "events")
 }
@@ -91,6 +95,13 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 	                  WHERE lower(elem->>'name') LIKE lower($1) 
 					  OR lower(elem->'launch_service_provider'->>'name') LIKE lower($1)
 					  OR lower(elem->'launch_service_provider'->>'abbrev') LIKE lower($1)`
+		case "previous_launches":
+			query = `SELECT jsonb_agg(elem)
+						FROM api_data,
+							jsonb_array_elements(api_data.previous_launches) AS elem
+						WHERE lower(elem->>'name') LIKE lower($1) 
+						OR lower(elem->'launch_service_provider'->>'name') LIKE lower($1)
+						OR lower(elem->'launch_service_provider'->>'abbrev') LIKE lower($1)`
 		case "events":
 			query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
@@ -177,6 +188,7 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 
 	c.JSON(200, result)
 }
+
 func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
 	var request models.Subscription
 	if err := ctx.ShouldBindJSON(&request); err != nil {
