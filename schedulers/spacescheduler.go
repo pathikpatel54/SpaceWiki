@@ -111,8 +111,8 @@ func LaunchDataFetcher(db *sql.DB) {
 	}
 
 	for column := range apiMap {
-		if column == "launches" {
-			tickers[column] = time.NewTicker(25 * time.Minute) // Update every 15 minutes
+		if column == "launches" || column == "events" {
+			tickers[column] = time.NewTicker(60 * time.Minute) // Update every 60 minutes
 		} else {
 			tickers[column] = time.NewTicker(24 * time.Hour) // Update every 24 hours
 		}

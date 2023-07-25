@@ -2,55 +2,21 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Container,
-  Title,
   Text,
   Paper,
   Grid,
   Divider,
-  Group,
-  ActionIcon,
   Button,
+  Title,
 } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLaunches, selectAllSpace } from "../features/auth/spaceSlice";
+import {
+  fetchEvents,
+  fetchLaunches,
+  selectAllSpace,
+} from "../features/auth/spaceSlice";
 import Cards from "./Cards";
 import { IconArrowRight } from "@tabler/icons-react";
-
-const links = [
-  {
-    link: "/launches",
-    label: "Launches",
-  },
-  {
-    link: "/events",
-    label: "Events",
-  },
-  {
-    link: "/agencies",
-    label: "Agencies",
-  },
-  {
-    label: "More",
-    links: [
-      {
-        link: "/astronauts",
-        label: "Astronauts",
-      },
-      {
-        link: "/space-stations",
-        label: "Space Stations",
-      },
-      {
-        link: "/expeditions",
-        label: "Expeditions",
-      },
-      {
-        link: "/dockings",
-        label: "Dockings",
-      },
-    ],
-  },
-];
 
 const LandingPage = ({ user }) => {
   const dispatch = useDispatch();
@@ -58,11 +24,12 @@ const LandingPage = ({ user }) => {
 
   useEffect(() => {
     dispatch(fetchLaunches());
+    dispatch(fetchEvents());
   }, []);
 
-  const { launches: upcomingLaunch } = space;
+  const { launches: upcomingLaunch, events: upcomingEvents } = space;
 
-  const renderLaunches = upcomingLaunch.slice(0, 6).map((launch) => {
+  const renderLaunches = upcomingLaunch?.slice(0, 6).map((launch) => {
     return (
       <Grid.Col xs={12} sm={6} md={4} lg={4} key={launch.id}>
         <Cards image={launch.image} title={launch.name} time={launch.net} />
@@ -70,10 +37,21 @@ const LandingPage = ({ user }) => {
     );
   });
 
-  return (
-    <Container size="md" style={{ textAlign: "center", padding: "2rem" }}>
-      <Title mb="md">Welcome, {user.name}!</Title>
+  const renderEvents = upcomingEvents?.slice(0, 6).map((event) => {
+    return (
+      <Grid.Col xs={12} sm={6} md={4} lg={4} key={event.id}>
+        <Cards
+          image={event.feature_image}
+          title={event.name}
+          time={event.date}
+        />
+      </Grid.Col>
+    );
+  });
 
+  return (
+    <Container size="lg" style={{ textAlign: "center", padding: "2rem" }}>
+      <Title order={2}>Welcome back, {user.name}!</Title>
       <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
         <Text size="lg" weight={500} style={{ marginBottom: "1rem" }}>
           Upcoming Launches
@@ -85,7 +63,26 @@ const LandingPage = ({ user }) => {
           <Text>No upcoming launches at the moment. Check back soon!</Text>
         )}
         <Link to="/launches" style={{ textDecoration: "none" }}>
-          <Button mt={20} right={<IconArrowRight size="1rem" />}>See More</Button>
+          <Button mt={20} right={<IconArrowRight size="1rem" />}>
+            See More
+          </Button>
+        </Link>
+      </Paper>
+
+      <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
+        <Text size="lg" weight={500} style={{ marginBottom: "1rem" }}>
+          Upcoming Events
+        </Text>
+        <Divider my="sm" h={20} />
+        {upcomingEvents ? (
+          <Grid> {renderEvents}</Grid>
+        ) : (
+          <Text>No upcoming events at the moment. Check back soon!</Text>
+        )}
+        <Link to="/events" style={{ textDecoration: "none" }}>
+          <Button mt={20} right={<IconArrowRight size="1rem" />}>
+            See More
+          </Button>
         </Link>
       </Paper>
     </Container>

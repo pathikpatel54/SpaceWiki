@@ -308,5 +308,4 @@ func (c *SpaceController) GetLaunchID(ctx *gin.Context) {
 		return
 	}
 
-	
 }

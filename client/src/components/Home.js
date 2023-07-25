@@ -104,7 +104,7 @@ export default function HeroText() {
   const { classes } = useStyles();
 
   return (
-    <Container className={classes.wrapper} size={1000}>
+    <Container className={classes.wrapper} size="lg">
       <div className={classes.inner}>
         <Title className={classes.title}>
           Largest database of{" "}
