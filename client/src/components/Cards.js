@@ -27,7 +27,7 @@ export default function Cards({ image, title }) {
   return (
     <Card withBorder padding="xs" className={classes.card}>
       <Card.Section>
-        <Image src={image} alt={title} height={200} />
+        <Image src={image} alt={title} height={300} />
       </Card.Section>
       <Group position="apart" mt="xs">
         <Text fz="sm" fw={700} className={classes.title} h={40}>

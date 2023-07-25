@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Container, Title, Text, Paper, Grid } from "@mantine/core";
+import { Container, Title, Text, Paper, Grid, Divider } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLaunches, selectAllSpace } from "../features/auth/spaceSlice";
 import Cards from "./Cards";
@@ -71,6 +71,7 @@ const LandingPage = ({ user }) => {
         <Text size="lg" weight={500} style={{ marginBottom: "1rem" }}>
           Upcoming Launches
         </Text>
+        <Divider my="sm" mb={30} />
         {upcomingLaunch ? (
           <Grid> {renderLaunches}</Grid>
         ) : (
