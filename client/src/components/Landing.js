@@ -32,7 +32,9 @@ const LandingPage = ({ user }) => {
   const renderLaunches = upcomingLaunch?.slice(0, 6).map((launch) => {
     return (
       <Grid.Col xs={12} sm={6} md={4} lg={4} key={launch.id}>
-        <Cards image={launch.image} title={launch.name} time={launch.net} />
+        <Link to={`/lunches/${launch.id}`} style={{ textDecoration: "none" }}>
+          <Cards image={launch.image} title={launch.name} time={launch.net} />
+        </Link>
       </Grid.Col>
     );
   });
@@ -40,11 +42,13 @@ const LandingPage = ({ user }) => {
   const renderEvents = upcomingEvents?.slice(0, 6).map((event) => {
     return (
       <Grid.Col xs={12} sm={6} md={4} lg={4} key={event.id}>
-        <Cards
-          image={event.feature_image}
-          title={event.name}
-          time={event.date}
-        />
+        <Link to={`/events/${event.id}`} style={{ textDecoration: "none" }}>
+          <Cards
+            image={event.feature_image}
+            title={event.name}
+            time={event.date}
+          />
+        </Link>
       </Grid.Col>
     );
   });

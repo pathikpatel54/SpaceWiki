@@ -297,7 +297,7 @@ export default function HeaderAction() {
               >
                 <img
                   className="header-top"
-                  src="logo.png"
+                  src="/logo.png"
                   style={{ maxWidth: 120 }}
                 />
               </Link>
@@ -351,7 +351,7 @@ export default function HeaderAction() {
               >
                 <img
                   className="header-top"
-                  src="logo.png"
+                  src="/logo.png"
                   style={{ maxWidth: 120 }}
                 />
               </Link>

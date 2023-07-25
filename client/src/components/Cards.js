@@ -12,6 +12,12 @@ const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+
+    transition: "transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
+    "&:hover": {
+      transform: "scale(1) translateY(-2px)",
+      boxShadow: "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
+    },
   },
 
   footer: {
