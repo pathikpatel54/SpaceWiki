@@ -1,6 +1,23 @@
 import { Container, Paper, Tabs, Text } from "@mantine/core";
+import {
+  fetchPreviousLaunches,
+  selectAllSpace,
+} from "../features/auth/spaceSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const Launches = () => {
+  const dispatch = useDispatch();
+  const space = useSelector(selectAllSpace);
+
+  useEffect(() => {
+    dispatch(fetchPreviousLaunches());
+  }, []);
+
+  const { previous_launches } = space;
+
+  const renderLaunches = previous_launches.
+
   return (
     <Container size="lg">
       <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
@@ -19,7 +36,7 @@ const Launches = () => {
           </Tabs.List>
 
           <Tabs.Panel value="upcoming" pt="xs">
-            Upcoming Launches
+            {previous_launches ? }
           </Tabs.Panel>
 
           <Tabs.Panel value="previous" pt="xs">

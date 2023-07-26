@@ -8,6 +8,7 @@ import {
   Divider,
   Button,
   Title,
+  Loader,
 } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,7 +28,12 @@ const LandingPage = ({ user }) => {
     dispatch(fetchEvents());
   }, []);
 
-  const { launches: upcomingLaunch, events: upcomingEvents } = space;
+  const {
+    launches: upcomingLaunch,
+    launchstatus,
+    eventstatus,
+    events: upcomingEvents,
+  } = space;
 
   const renderLaunches = upcomingLaunch?.slice(0, 6).map((launch) => {
     return (
@@ -62,7 +68,15 @@ const LandingPage = ({ user }) => {
         </Text>
         <Divider my="sm" h={20} />
         {upcomingLaunch ? (
-          <Grid> {renderLaunches}</Grid>
+          launchstatus === "fulfilled" ? (
+            <Grid> {renderLaunches}</Grid>
+          ) : (
+            <>
+              <div>
+                <Loader />
+              </div>
+            </>
+          )
         ) : (
           <Text>No upcoming launches at the moment. Check back soon!</Text>
         )}
@@ -79,7 +93,15 @@ const LandingPage = ({ user }) => {
         </Text>
         <Divider my="sm" h={20} />
         {upcomingEvents ? (
-          <Grid> {renderEvents}</Grid>
+          eventstatus === "fulfilled" ? (
+            <Grid> {renderEvents}</Grid>
+          ) : (
+            <>
+              <div>
+                <Loader />
+              </div>
+            </>
+          )
         ) : (
           <Text>No upcoming events at the moment. Check back soon!</Text>
         )}

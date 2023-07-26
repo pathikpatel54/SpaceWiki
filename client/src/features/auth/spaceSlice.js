@@ -4,7 +4,10 @@ import axios from "axios";
 const initialState = {
   launches: [],
   events: [],
-  status: "idle",
+  previous_launches: [],
+  launchstatus: "idle",
+  eventstatus: "idle",
+  previous_launchesstatus: "idle",
   error: "",
 };
 
@@ -16,13 +19,18 @@ export const fetchLaunches = createAsyncThunk(
   }
 );
 
-export const fetchEvents = createAsyncThunk(
-  "space/fetchEvents",
+export const fetchPreviousLaunches = createAsyncThunk(
+  "space/fetchPreviousLaunches",
   async () => {
-    const response = await axios.get("/api/events");
+    const response = await axios.get("/api/previous_launches");
     return response.data;
   }
 );
+
+export const fetchEvents = createAsyncThunk("space/fetchEvents", async () => {
+  const response = await axios.get("/api/events");
+  return response.data;
+});
 
 const spaceSlice = createSlice({
   name: "space",
@@ -31,28 +39,42 @@ const spaceSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(fetchLaunches.pending, (state) => {
-        state.status = "pending";
+        state.launchstatus = "pending";
         state.error = "";
       })
       .addCase(fetchLaunches.fulfilled, (state, action) => {
-        state.status = "fulfilled";
+        state.launchstatus = "fulfilled";
         state.launches = action.payload;
         state.error = "";
       })
       .addCase(fetchLaunches.rejected, (state, action) => {
-        state.status = "rejected";
+        state.launchstatus = "rejected";
         state.error = action.error.message;
-      }).addCase(fetchEvents.pending, (state) => {
-        state.status = "pending";
+      })
+      .addCase(fetchEvents.pending, (state) => {
+        state.eventstatus = "pending";
         state.error = "";
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
-        state.status = "fulfilled";
+        state.eventstatus = "fulfilled";
         state.events = action.payload;
         state.error = "";
       })
       .addCase(fetchEvents.rejected, (state, action) => {
-        state.status = "rejected";
+        state.eventstatus = "rejected";
+        state.error = action.error.message;
+      })
+      .addCase(fetchPreviousLaunches.pending, (state) => {
+        state.previous_launchesstatus = "pending";
+        state.error = "";
+      })
+      .addCase(fetchPreviousLaunches.fulfilled, (state, action) => {
+        state.previous_launchesstatus = "fulfilled";
+        state.previous_launches = action.payload;
+        state.error = "";
+      })
+      .addCase(fetchPreviousLaunches.rejected, (state, action) => {
+        state.previous_launchesstatus = "rejected";
         state.error = action.error.message;
       });
   },
