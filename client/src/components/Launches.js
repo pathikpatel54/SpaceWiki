@@ -55,7 +55,7 @@ const Launches = () => {
 
   const renderLaunches = upcomingData?.map((launch) => {
     return (
-      <Grid.Col xs={12} sm={6} md={4} lg={4} key={launch.id}>
+      <Grid.Col xs={12} sm={12} md={6} lg={6} key={launch.id}>
         <Link to={`/launches/${launch.id}`} style={{ textDecoration: "none" }}>
           <LaunchCards
             image={launch?.image}
@@ -63,7 +63,11 @@ const Launches = () => {
             description={launch.mission?.description}
             time={launch?.window_start}
             status={launch?.status.name}
-            agency={launch?.launch_service_provider?.name}
+            agency={
+              launch?.launch_service_provider?.name?.length <= 15
+                ? launch?.launch_service_provider?.name
+                : launch?.launch_service_provider?.abbrev
+            }
           />
         </Link>
       </Grid.Col>

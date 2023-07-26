@@ -1,11 +1,12 @@
 import {
   createStyles,
-  Card,
-  Image,
   Text,
-  Group,
+  Card,
   RingProgress,
+  Group,
   rem,
+  AspectRatio,
+  Image,
 } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
@@ -14,67 +15,66 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
-  footer: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
+  label: {
+    fontWeight: 700,
+    lineHeight: 1,
+    marginBottom: theme.spacing.md,
   },
 
-  title: {
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+  lead: {
+    fontWeight: 700,
+    fontSize: rem(22),
     lineHeight: 1,
+  },
+
+  inner: {
+    display: "flex",
+    marginTop: theme.spacing.md,
+    [theme.fn.smallerThan("xs")]: {
+      flexDirection: "column",
+    },
   },
 }));
 
-export default function LaunchCards({
-  image,
-  title,
-  description,
-  time,
-  status,
-  agency,
-}) {
-  const { classes } = useStyles();
+export default function LaunchCards({ image, title, time, status, agency }) {
+  const { classes, theme } = useStyles();
 
   return (
-    <Card withBorder padding="lg" className={classes.card}>
+    <Card withBorder p="xl" radius="xs" className={classes.card}>
       <Card.Section>
-        <Image src={image} alt={title} height={100} />
+        <AspectRatio ratio={1920 / 1080}>
+          <Image src={image} alt={title} />
+        </AspectRatio>
       </Card.Section>
-
-      <Group position="apart" mt="xl">
-        <Text fz="sm" fw={700} className={classes.title}>
-          {title}
-        </Text>
-        <Group spacing={5}>
-          <Text fz="xs" c="dimmed">
-            {time}
-          </Text>
-          <RingProgress size={18} sections={[{ value: 80, color: "blue" }]} />
-        </Group>
-      </Group>
-      <Text mt="sm" mb="md" c="dimmed" fz="xs">
-        {description}
-      </Text>
-      <Card.Section className={classes.footer}>
-        <div key="agency">
-          <Text size="xs" color="dimmed">
-            Agency
-          </Text>
-          <Text weight={500} size="sm">
-            {agency}
-          </Text>
-        </div>
-        <div key="status">
-          <Text size="xs" color="dimmed">
-            Status
-          </Text>
-          <Text weight={500} size="sm">
-            {status}
-          </Text>
+      <Card.Section>
+        <div className={classes.inner}>
+          <div>
+            <Text fz="xl" className={classes.label}>
+              {title}
+            </Text>
+            <div>
+              <Text fz="xs" color="dimmed">
+                Launch Time
+              </Text>
+              <Text className={classes.lead} mt={30}>
+                {new Date(time).toLocaleString()}
+              </Text>
+            </div>
+            <Group mt="lg">
+              <div key="status">
+                <Text size="xs" color="dimmed">
+                  Status
+                </Text>
+                <Text className={classes.label}>{status}</Text>
+              </div>
+              <div key="agency">
+                <Text size="xs" color="dimmed">
+                  Agency
+                </Text>
+                <Text className={classes.label}>{agency}</Text>
+              </div>
+            </Group>
+          </div>
         </div>
       </Card.Section>
     </Card>
