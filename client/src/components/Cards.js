@@ -18,22 +18,13 @@ const useStyles = createStyles((theme) => ({
       boxShadow: theme.shadows.md,
     },
   },
-
-  footer: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
-  },
 }));
 
 export default function Cards({ image, title, time }) {
   const { classes } = useStyles();
 
   return (
-    <Card p="md" radius="md" component="a" href="#" className={classes.card}>
+    <Card p="md" radius="xs" component="a" href="#" className={classes.card}>
       <AspectRatio ratio={1920 / 1080}>
         <Image src={image} />
       </AspectRatio>
@@ -46,7 +37,7 @@ export default function Cards({ image, title, time }) {
       >
         {new Date(time).toLocaleString()}
       </Text>
-      <Text className={classes.title} style={{ marginTop: "5px" }} h={45}>
+      <Text style={{ marginTop: "5px" }} h={45}>
         {title}
       </Text>
     </Card>

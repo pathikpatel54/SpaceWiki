@@ -40,6 +40,7 @@ const spaceSlice = createSlice({
     builder
       .addCase(fetchLaunches.pending, (state) => {
         state.launchstatus = "pending";
+        state.launches = [];
         state.error = "";
       })
       .addCase(fetchLaunches.fulfilled, (state, action) => {
@@ -49,10 +50,12 @@ const spaceSlice = createSlice({
       })
       .addCase(fetchLaunches.rejected, (state, action) => {
         state.launchstatus = "rejected";
+        state.launches = [];
         state.error = action.error.message;
       })
       .addCase(fetchEvents.pending, (state) => {
         state.eventstatus = "pending";
+        state.events = [];
         state.error = "";
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
@@ -62,10 +65,12 @@ const spaceSlice = createSlice({
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.eventstatus = "rejected";
+        state.events = [];
         state.error = action.error.message;
       })
       .addCase(fetchPreviousLaunches.pending, (state) => {
         state.previous_launchesstatus = "pending";
+        state.previous_launches = [];
         state.error = "";
       })
       .addCase(fetchPreviousLaunches.fulfilled, (state, action) => {
@@ -75,6 +80,7 @@ const spaceSlice = createSlice({
       })
       .addCase(fetchPreviousLaunches.rejected, (state, action) => {
         state.previous_launchesstatus = "rejected";
+        state.previous_launches = [];
         state.error = action.error.message;
       });
   },

@@ -65,7 +65,7 @@ export default function Features() {
     <div key={feature.title}>
       <ThemeIcon
         size={44}
-        radius="md"
+        radius="xs"
         variant="gradient"
         gradient={{ deg: 133, from: "blue", to: "cyan" }}
       >

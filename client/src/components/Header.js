@@ -70,7 +70,7 @@ const useStyles = createStyles((theme) => ({
     display: "block",
     lineHeight: 1,
     padding: `${rem(8)} ${rem(12)}`,
-    borderRadius: theme.radius.sm,
+    borderRadius: theme.radius.xs,
     textDecoration: "none",
     color:
       theme.colorScheme === "dark"
@@ -307,7 +307,7 @@ export default function HeaderAction() {
               {items}
             </Group>
             <Group>
-              <Menu shadow="md" width={200}>
+              <Menu shadow="md" width={200} radius="xs">
                 <Menu.Target>
                   <UserButton
                     image={auth?.picture}
