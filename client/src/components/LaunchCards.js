@@ -13,6 +13,11 @@ const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    transition: "transform 150ms ease, box-shadow 150ms ease",
+    "&:hover": {
+      transform: "scale(1.01)",
+      boxShadow: theme.shadows.md,
+    },
   },
 
   label: {
@@ -36,8 +41,16 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function LaunchCards({ image, title, time, status, agency }) {
-  const { classes, theme } = useStyles();
+export default function LaunchCards({
+  image,
+  title,
+  time,
+  status,
+  agency,
+  country,
+  launchsite,
+}) {
+  const { classes } = useStyles();
 
   return (
     <Card withBorder p="xl" radius="xs" className={classes.card}>
@@ -52,26 +65,42 @@ export default function LaunchCards({ image, title, time, status, agency }) {
             <Text fz="xl" className={classes.label}>
               {title}
             </Text>
-            <div>
-              <Text fz="xs" color="dimmed">
-                Launch Time
-              </Text>
-              <Text className={classes.lead} mt={30}>
-                {new Date(time).toLocaleString()}
-              </Text>
-            </div>
-            <Group mt="lg">
+            <Group>
+              <div key="site">
+                <Text size="xs" color="dimmed">
+                  Launch Time
+                </Text>
+                <Text className={classes.label}>
+                  {new Date(time).toLocaleString()}
+                </Text>
+              </div>
+            </Group>
+            <Group>
+              <div key="agency">
+                <Text size="xs" color="dimmed">
+                  Agency
+                </Text>
+                <Text className={classes.label}>{agency}</Text>
+              </div>
+              <div key="country">
+                <Text size="xs" color="dimmed">
+                  Country
+                </Text>
+                <Text className={classes.label}>{country}</Text>
+              </div>
               <div key="status">
                 <Text size="xs" color="dimmed">
                   Status
                 </Text>
                 <Text className={classes.label}>{status}</Text>
               </div>
-              <div key="agency">
+            </Group>
+            <Group>
+              <div key="site">
                 <Text size="xs" color="dimmed">
-                  Agency
+                  Launch Site
                 </Text>
-                <Text className={classes.label}>{agency}</Text>
+                <Text className={classes.label}>{launchsite}</Text>
               </div>
             </Group>
           </div>

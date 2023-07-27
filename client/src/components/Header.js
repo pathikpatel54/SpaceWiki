@@ -208,7 +208,10 @@ export default function HeaderAction() {
               className={cx(classes.link, {
                 [classes.linkActive]: active === item.link,
               })}
-              onClick={() => setActive(item.link)}
+              onClick={() => {
+                close();
+                setActive(item.link);
+              }}
             >
               {item.label}
             </a>
@@ -222,7 +225,10 @@ export default function HeaderAction() {
               className={cx(classes.link, {
                 [classes.linkActive]: active === link.link,
               })}
-              onClick={() => setActive(link.link)}
+              onClick={() => {
+                close();
+                setActive(link.link);
+              }}
             >
               <Center>
                 <span className={classes.linkLabel}>{link.label}</span>
@@ -242,7 +248,10 @@ export default function HeaderAction() {
           className={cx(classes.link, {
             [classes.linkActive]: active === link.link,
           })}
-          onClick={() => setActive(link.link)}
+          onClick={() => {
+            close();
+            setActive(link.link);
+          }}
         >
           {link.label}
         </a>

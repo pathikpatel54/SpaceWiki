@@ -8,6 +8,7 @@ const initialState = {
   launchstatus: "idle",
   eventstatus: "idle",
   previous_launchesstatus: "idle",
+  searchstatus: "idle",
   error: "",
 };
 
@@ -15,6 +16,14 @@ export const fetchLaunches = createAsyncThunk(
   "space/fetchLaunches",
   async () => {
     const response = await axios.get("/api/launches");
+    return response.data;
+  }
+);
+
+export const searchLaunches = createAsyncThunk(
+  "space/searchLaunches",
+  async (keyword) => {
+    const response = await axios.get(`/api/launches?keyword=${keyword}`);
     return response.data;
   }
 );
@@ -51,6 +60,19 @@ const spaceSlice = createSlice({
       .addCase(fetchLaunches.rejected, (state, action) => {
         state.launchstatus = "rejected";
         state.launches = [];
+        state.error = action.error.message;
+      })
+      .addCase(searchLaunches.pending, (state) => {
+        state.searchstatus = "pending";
+        state.error = "";
+      })
+      .addCase(searchLaunches.fulfilled, (state, action) => {
+        state.searchstatus = "fulfilled";
+        state.launches = action.payload;
+        state.error = "";
+      })
+      .addCase(searchLaunches.rejected, (state, action) => {
+        state.searchstatus = "rejected";
         state.error = action.error.message;
       })
       .addCase(fetchEvents.pending, (state) => {
