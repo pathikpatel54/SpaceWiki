@@ -10,6 +10,7 @@ import (
 	"spacealert/models"
 	"strings"
 
+	"github.com/biter777/countries"
 	"github.com/gin-gonic/gin"
 )
 
@@ -85,16 +86,24 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 
 	keyword := c.Query("keyword")
 	country := c.Query("country")
-
+	countrysearch := countries.ByName(keyword)
 	if keyword != "" {
 		switch columnName {
 		case "launches":
-			query = `SELECT jsonb_agg(elem)
+			if countrysearch != countries.Unknown {
+				query = `SELECT jsonb_agg(elem)
+	                  FROM api_data,
+	                       jsonb_array_elements(api_data.launches) AS elem
+	                  WHERE lower(elem->'launch_service_provider'->>'country_code') LIKE lower($1)`
+				log.Println("Tinkujiya")
+			} else {
+				query = `SELECT jsonb_agg(elem)
 	                  FROM api_data,
 	                       jsonb_array_elements(api_data.launches) AS elem
 	                  WHERE lower(elem->>'name') LIKE lower($1) 
 					  OR lower(elem->'launch_service_provider'->>'name') LIKE lower($1)
 					  OR lower(elem->'launch_service_provider'->>'abbrev') LIKE lower($1)`
+			}
 		case "previous_launches":
 			query = `SELECT jsonb_agg(elem)
 						FROM api_data,
@@ -152,8 +161,11 @@ func (sc *SpaceController) getData(c *gin.Context, columnName string) {
 		default:
 			query = "SELECT " + columnName + " FROM api_data WHERE id = 1"
 		}
-
-		rows, err = sc.db.Query(query, "%"+keyword+"%")
+		if countrysearch != countries.Unknown {
+			rows, err = sc.db.Query(query, "%"+countrysearch.Alpha3()+"%")
+		} else {
+			rows, err = sc.db.Query(query, "%"+keyword+"%")
+		}
 	} else if country != "" {
 		switch columnName {
 		case "agencies":

@@ -4,6 +4,8 @@ cloud.google.com/go/compute/metadata v0.2.3 h1:mg4jlk7mCAj6xXp9UJ4fjI9VUI5rubuGB
 cloud.google.com/go/compute/metadata v0.2.3/go.mod h1:VAV5nSsACxMJvgaAuX6Pk2AawlZn8kiOGuCv6gTkwuA=
 github.com/SparkPost/gosparkpost v0.2.0 h1:yzhHQT7cE+rqzd5tANNC74j+2x3lrPznqPJrxC1yR8s=
 github.com/SparkPost/gosparkpost v0.2.0/go.mod h1:S9WKcGeou7cbPpx0kTIgo8Q69WZvUmVeVzbD+djalJ4=
+github.com/biter777/countries v1.6.5 h1:OqUcbpqC5aB3rIuMOU1jZQr+Ool09fm1WoNCJ07aCyc=
+github.com/biter777/countries v1.6.5/go.mod h1:1HSpZ526mYqKJcpT5Ti1kcGQ0L0SrXWIaptUWjFfv2E=
 github.com/buger/jsonparser v1.0.0/go.mod h1:tgcrVJ81GPSF0mz+0nu1Xaz0fazGPrmmJfJtxjbHhUQ=
 github.com/bytedance/sonic v1.5.0/go.mod h1:ED5hyg4y6t3/9Ku1R6dU/4KyJ48DZ4jPhfY1O2AihPM=
 github.com/bytedance/sonic v1.9.1 h1:6iJ6NqdoxCDr6mbY8h18oSO+cShGSMRGCEo7F2h0x8s=

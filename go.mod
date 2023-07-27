@@ -7,6 +7,7 @@ require github.com/gin-gonic/gin v1.9.1
 require (
 	cloud.google.com/go/compute v1.20.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	github.com/biter777/countries v1.6.5 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect

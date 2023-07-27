@@ -73,6 +73,7 @@ const spaceSlice = createSlice({
       })
       .addCase(searchLaunches.rejected, (state, action) => {
         state.searchstatus = "rejected";
+        state.launches = [];
         state.error = action.error.message;
       })
       .addCase(fetchEvents.pending, (state) => {
