@@ -352,7 +352,21 @@ func (c *SpaceController) GetLaunchID(ctx *gin.Context) {
 	var jsonResult json.RawMessage
 	if err := row.Scan(&jsonResult); err != nil {
 		log.Printf("Failed to scan row: %v", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch data"})
+		query = fmt.Sprintf(`
+		SELECT launch FROM api_data, 
+		jsonb_array_elements(api_data.previous_launches) AS launch
+		WHERE (launch->>'id') = '%s';`, launchID)
+
+		// Execute the query
+		row = c.db.QueryRow(query)
+
+		var jsonResult2 json.RawMessage
+		if err := row.Scan(&jsonResult2); err != nil {
+			log.Printf("Failed to scan row: %v", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch data"})
+			return
+		}
+		ctx.JSON(http.StatusOK, jsonResult2)
 		return
 	}
 

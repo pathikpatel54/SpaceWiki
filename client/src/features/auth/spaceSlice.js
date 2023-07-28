@@ -2,15 +2,22 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
+  launch: {},
   launches: [],
   events: [],
   previous_launches: [],
+  launchidstatus: "idle",
   launchstatus: "idle",
   eventstatus: "idle",
   previous_launchesstatus: "idle",
   searchstatus: "idle",
   error: "",
 };
+
+export const fetchLaunch = createAsyncThunk("space/fetchLaunch", async (id) => {
+  const response = await axios.get(`/api/launches/${id}`);
+  return response.data;
+});
 
 export const fetchLaunches = createAsyncThunk(
   "space/fetchLaunches",
@@ -60,6 +67,21 @@ const spaceSlice = createSlice({
       .addCase(fetchLaunches.rejected, (state, action) => {
         state.launchstatus = "rejected";
         state.launches = [];
+        state.error = action.error.message;
+      })
+      .addCase(fetchLaunch.pending, (state) => {
+        state.launchidstatus = "pending";
+        state.launch = {};
+        state.error = "";
+      })
+      .addCase(fetchLaunch.fulfilled, (state, action) => {
+        state.launchidstatus = "fulfilled";
+        state.launch = action.payload;
+        state.error = "";
+      })
+      .addCase(fetchLaunch.rejected, (state, action) => {
+        state.launchidstatus = "rejected";
+        state.launch = {};
         state.error = action.error.message;
       })
       .addCase(searchLaunches.pending, (state) => {
