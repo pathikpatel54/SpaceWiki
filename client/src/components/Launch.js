@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Container,
   Divider,
   Grid,
@@ -14,6 +15,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchLaunch, selectAllSpace } from "../features/auth/spaceSlice";
+import { countries } from "country-data";
+import formatNumber from "../utils/number";
+
+const columns = [
+  { name: "Name", key: "name", width: 150 }, // Setting the width to 150 pixels
+  { name: "Age", key: "age", width: 80 }, // Setting the width to 80 pixels
+];
 
 export default function Launch() {
   const { id } = useParams();
@@ -47,30 +55,8 @@ export default function Launch() {
                 <Divider mb="lg" />
                 <Image radius="xs" src={launch.image} />
                 <Divider mt="lg" mb="lg" />
-                <Table style={{ marginTop: "20px" }} withColumnBorders>
+                <Table style={{ marginTop: "10px" }}>
                   <tbody>
-                    <tr key="launchserviceprovider">
-                      <td>
-                        <Text fw={700} fz="md">
-                          Launch Agency
-                        </Text>
-                      </td>
-                      <td>
-                        <Text fz="md">
-                          {launch?.launch_service_provider?.name}
-                        </Text>
-                      </td>
-                    </tr>
-                    <tr key="status">
-                      <td>
-                        <Text fw={700} fz="md">
-                          Status
-                        </Text>
-                      </td>
-                      <td>
-                        <Text fz="md">{launch?.status?.name}</Text>
-                      </td>
-                    </tr>
                     <tr key="window">
                       <td>
                         <Text fw={700} fz="md">
@@ -84,22 +70,122 @@ export default function Launch() {
                         </Text>
                       </td>
                     </tr>
-                    <tr key="rocket">
+                    <tr key="status">
+                      <td style={{ minWidth: "30%" }}>
+                        <Text fw={700} fz="md">
+                          Status
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{launch?.status?.name}</Text>
+                      </td>
+                    </tr>
+                    <tr key="coutry">
                       <td>
                         <Text fw={700} fz="md">
-                          Launch Vehicle
+                          Country{" "}
                         </Text>
                       </td>
                       <td>
                         <Text fz="md">
-                          {launch?.rocket?.configuration?.full_name}{" "}
+                          {launch?.launch_service_provider?.country_code &&
+                          launch?.launch_service_provider?.country_code
+                            ?.length > 3
+                            ? "Multiple"
+                            : countries[
+                                launch?.launch_service_provider?.country_code
+                              ]?.name}
                         </Text>
                       </td>
                     </tr>
-                    <tr key="success">
+                  </tbody>
+                </Table>
+                <Title
+                  order={4}
+                  style={{ marginTop: "30px", marginBottom: "10px" }}
+                  ta="center"
+                >
+                  Mission
+                </Title>
+                <Table style={{ marginTop: "10px" }}>
+                  <tbody>
+                    <tr key="mission">
+                      <td style={{ minWidth: "30%" }}>
+                        <Text fw={700} fz="md">
+                          Mission Name
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{launch?.mission?.name}</Text>
+                      </td>
+                    </tr>
+                    <tr key="description">
                       <td>
                         <Text fw={700} fz="md">
-                          Launch Vehicle Success Rate
+                          Mission Description
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{launch?.mission?.description}</Text>
+                      </td>
+                    </tr>
+                    <tr key="type">
+                      <td>
+                        <Text fw={700} fz="md">
+                          Mission Type
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{launch?.mission?.type}</Text>
+                      </td>
+                    </tr>
+                    <tr key="orbit">
+                      <td>
+                        <Text fw={700} fz="md">
+                          Orbit
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{launch?.mission?.orbit?.name}</Text>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+                <Title
+                  order={4}
+                  style={{ marginTop: "30px", marginBottom: "10px" }}
+                  ta="center"
+                >
+                  Launch Vehicle
+                </Title>
+
+                <Table style={{ marginTop: "10px" }} width="sm">
+                  <tbody>
+                    {launch?.rocket?.configuration?.wiki_url ? (
+                      <tr key="cost">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Launch Vehicle Name
+                          </Text>
+                        </td>
+                        <td>
+                          <Anchor
+                            href={launch?.rocket?.configuration?.wiki_url}
+                            target="_blank"
+                          >
+                            <Text fz="md">
+                              {launch?.rocket?.configuration?.full_name}
+                            </Text>
+                          </Anchor>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    <tr key="success">
+                      <td style={{ minWidth: "30%" }}>
+                        <Text fw={700} fz="md">
+                          Launch Success Rate
                         </Text>
                       </td>
                       <td>
@@ -126,38 +212,25 @@ export default function Launch() {
                         </Text>
                       </td>
                     </tr>
-                    <tr key="mission">
-                      <td>
-                        <Text fw={700} fz="md">
-                          Mission
-                        </Text>
-                      </td>
-                      <td>
-                        <Text fz="md">{launch?.mission?.name}</Text>
-                      </td>
-                    </tr>
-                    <tr key="description">
-                      <td>
-                        <Text fw={700} fz="md">
-                          Mission Description
-                        </Text>
-                      </td>
-                      <td>
-                        <Text fz="md">{launch?.mission?.description}</Text>
-                      </td>
-                    </tr>
-                    <tr key="rocket">
-                      <td>
-                        <Text fw={700} fz="md">
-                          Launchpad
-                        </Text>
-                      </td>
-                      <td>
-                        <Text fz="md">
-                          {launch?.pad?.name} | {launch?.pad?.location?.name}
-                        </Text>
-                      </td>
-                    </tr>
+                    {launch?.rocket?.configuration?.launch_cost ? (
+                      <tr key="cost">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Launch Cost
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            $
+                            {formatNumber(
+                              launch?.rocket?.configuration?.launch_cost
+                            )}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
                   </tbody>
                 </Table>
               </>

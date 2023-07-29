@@ -116,7 +116,9 @@ const Launches = () => {
                 : launch?.launch_service_provider?.abbrev
             }
             country={
-              countries[launch?.launch_service_provider?.country_code].name
+              launch?.launch_service_provider?.country_code?.length > 3
+                ? "Multiple"
+                : countries[launch?.launch_service_provider?.country_code].name
             }
             launchsite={launch.pad?.location?.name}
           />
