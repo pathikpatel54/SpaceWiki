@@ -31,8 +31,8 @@ const App = () => {
             element={auth?.email ? <Landing user={auth} /> : <Home />}
           />
           <Route path="/launches" element={<Launches />} />
-          <Route path="/launches/upcoming/:page" element={<Launches />} />
-          <Route path="/launches/previous/:page" element={<Launches />} />
+          <Route path="/launches/upcoming" element={<Launches />} />
+          <Route path="/launches/previous" element={<Launches />} />
           <Route path="/launches/:id" element={<Launch />} />
         </Routes>
       </BrowserRouter>

@@ -279,6 +279,46 @@ export default function Launch() {
                         ) : (
                           <></>
                         )}
+                        {launch?.rocket?.spacecraft_stage?.spacecraft
+                          ?.spacecraft_config?.crew_capacity !== null ? (
+                          <tr key="spacecraftcrewcapacity">
+                            <td style={{ minWidth: "30%" }}>
+                              <Text fw={700} fz="md">
+                                Spacecraft Crew Capacity
+                              </Text>
+                            </td>
+                            <td>
+                              <Text fz="md">
+                                {
+                                  launch?.rocket?.spacecraft_stage?.spacecraft
+                                    ?.spacecraft_config?.crew_capacity
+                                }
+                              </Text>
+                            </td>
+                          </tr>
+                        ) : (
+                          <></>
+                        )}
+                        {launch?.rocket?.spacecraft_stage?.spacecraft
+                          ?.spacecraft_config?.payload_capacity !== null ? (
+                          <tr key="spacecraftcrewcapacity">
+                            <td style={{ minWidth: "30%" }}>
+                              <Text fw={700} fz="md">
+                                Spacecraft Payload Capacity
+                              </Text>
+                            </td>
+                            <td>
+                              <Text fz="md">
+                                {
+                                  launch?.rocket?.spacecraft_stage?.spacecraft
+                                    ?.spacecraft_config?.payload_capacity
+                                }
+                              </Text>
+                            </td>
+                          </tr>
+                        ) : (
+                          <></>
+                        )}
                         {launch?.rocket?.spacecraft_stage?.launch_crew?.length >
                         0 ? (
                           <tr key="spacecraftname">
@@ -514,6 +554,74 @@ export default function Launch() {
                     </tr>
                   </tbody>
                 </Table>
+                <Title
+                  order={3}
+                  style={{ marginTop: "30px", marginBottom: "10px" }}
+                  ta="center"
+                  underline
+                >
+                  Launch Service Provider
+                </Title>
+                <Table style={{ marginTop: "10px" }} width="sm">
+                  <tbody>
+                    {launch?.launch_service_provider?.name ? (
+                      <tr key="lspname">
+                        <td style={{ minWidth: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Name
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.launch_service_provider?.name}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.launch_service_provider?.type ? (
+                      <tr key="lsptype">
+                        <td style={{ minWidth: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Type
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.launch_service_provider?.type}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.launch_service_provider?.description ? (
+                      <tr key="lspdescription">
+                        <td style={{ minWidth: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Launch Service Provider Description
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.launch_service_provider?.description}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                  </tbody>
+                </Table>
+                <Title
+                  order={3}
+                  style={{ marginTop: "30px", marginBottom: "10px" }}
+                  ta="center"
+                  underline
+                >
+                  Launchpad
+                </Title>
               </>
             )}
           </Paper>

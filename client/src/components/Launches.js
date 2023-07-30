@@ -20,7 +20,13 @@ import {
 } from "../features/auth/spaceSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { Paginator } from "../utils/paginator";
 import LaunchCards from "./LaunchCards";
 import { countries } from "country-data";
@@ -40,24 +46,28 @@ const Launches = () => {
   const path = useLocation();
   const [activeTab, setActiveTab] = useState("upcoming");
   const navigate = useNavigate();
-  const params = useParams();
+  const [searchParams, _] = useSearchParams();
+  const page = Number(searchParams.get("page"));
+  const search = searchParams.get("search");
 
   useEffect(() => {
-    dispatch(fetchLaunches());
-    dispatch(fetchPreviousLaunches());
+    if (search === null || search === "") {
+      dispatch(fetchLaunches());
+      dispatch(fetchPreviousLaunches());
+    }
   }, []);
 
   useEffect(() => {
     if (path.pathname === "/launches") {
-      navigate("/launches/upcoming/1");
+      navigate("/launches/upcoming?page=1&search=");
       return;
     }
-    const tab = path.pathname.split("/").slice(-2)[0];
+    const tab = path.pathname.split("/").slice(-1)[0];
+    console.log(tab);
     setActiveTab(tab);
   }, [path]);
 
   useEffect(() => {
-    const page = Number(params.page);
     if (isFinite(page)) {
       if (activeTab === "upcoming") {
         setPage(page);
@@ -65,11 +75,22 @@ const Launches = () => {
         setPrevious(page);
       }
     }
-  }, [params, activeTab]);
+  }, [page, activeTab]);
+
+  useEffect(() => {
+    if (search !== null) {
+      setSearchInput(search);
+    }
+  }, [search]);
 
   useEffect(() => {
     // Check if it's not the first render (component has mounted)
     if (!isFirstRender.current) {
+      navigate(
+        `/launches/${activeTab}?page=${
+          activeTab === "upcoming" ? activePage : activePrevious
+        }&search=${debouncedSearchInput}`
+      );
       dispatch(searchLaunches(debouncedSearchInput));
     } else {
       // Mark the component as mounted after the first render
@@ -160,9 +181,9 @@ const Launches = () => {
         onTabChange={(tab) => {
           setActiveTab(tab);
           navigate(
-            `/launches/${tab}/${
+            `/launches/${tab}?page=${
               tab === "upcoming" ? activePage : activePrevious
-            }`
+            }&search=${debouncedSearchInput}`
           );
         }}
       >
@@ -213,7 +234,7 @@ const Launches = () => {
           </Group>
 
           {upcomingLaunch ? (
-            launchstatus === "fulfilled" ? (
+            launchstatus !== "pending" ? (
               <Grid> {renderLaunches}</Grid>
             ) : (
               <>
@@ -226,13 +247,15 @@ const Launches = () => {
             <Text>No upcoming launches at the moment. Check back soon!</Text>
           )}
           <Space h={"xl"} />
-          {upcomingLaunch.length > 9 ? (
+          {upcomingLaunch.length > 6 ? (
             <Center>
               <Pagination
                 value={activePage}
                 onChange={(page) => {
                   setPage(page);
-                  navigate(`/launches/upcoming/${page}`);
+                  navigate(
+                    `/launches/upcoming?page=${page}&search=${debouncedSearchInput}`
+                  );
                   window.scrollTo(0, 0);
                 }}
                 total={total_pages}
@@ -246,7 +269,7 @@ const Launches = () => {
 
         <Tabs.Panel value="previous" pt="lg" pb="lg">
           {previous_launches ? (
-            previous_launchesstatus === "fulfilled" ? (
+            previous_launchesstatus !== "pending" ? (
               <Grid> {renderPrevious}</Grid>
             ) : (
               <>
@@ -259,13 +282,15 @@ const Launches = () => {
             <Text>No upcoming launches at the moment. Check back soon!</Text>
           )}
           <Space h={"xl"} />
-          {previous_launches.length > 9 ? (
+          {previous_launches.length > 6 ? (
             <Center>
               <Pagination
                 value={activePrevious}
                 onChange={(page) => {
                   setPrevious(page);
-                  navigate(`/launches/previous/${page}`);
+                  navigate(
+                    `/launches/previous?page=${page}&search=${debouncedSearchInput}`
+                  );
                   window.scrollTo(0, 0);
                 }}
                 total={previous_pages}
