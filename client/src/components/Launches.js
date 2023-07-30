@@ -20,7 +20,7 @@ import {
 } from "../features/auth/spaceSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Paginator } from "../utils/paginator";
 import LaunchCards from "./LaunchCards";
 import { countries } from "country-data";
@@ -37,11 +37,35 @@ const Launches = () => {
   const [value, setValue] = useState([Date | null, Date | null]);
   const debouncedSearchInput = useDebounce(searchInput, 500);
   const isFirstRender = useRef(true);
+  const path = useLocation();
+  const [activeTab, setActiveTab] = useState("upcoming");
+  const navigate = useNavigate();
+  const params = useParams();
 
   useEffect(() => {
     dispatch(fetchLaunches());
     dispatch(fetchPreviousLaunches());
   }, []);
+
+  useEffect(() => {
+    if (path.pathname === "/launches") {
+      navigate("/launches/upcoming/1");
+      return;
+    }
+    const tab = path.pathname.split("/").slice(-2)[0];
+    setActiveTab(tab);
+  }, [path]);
+
+  useEffect(() => {
+    const page = Number(params.page);
+    if (isFinite(page)) {
+      if (activeTab === "upcoming") {
+        setPage(page);
+      } else {
+        setPrevious(page);
+      }
+    }
+  }, [params, activeTab]);
 
   useEffect(() => {
     // Check if it's not the first render (component has mounted)
@@ -129,7 +153,19 @@ const Launches = () => {
 
   return (
     <Container size="lg">
-      <Tabs variant="outline" radius="xs" defaultValue="upcoming">
+      <Tabs
+        variant="outline"
+        radius="xs"
+        value={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          navigate(
+            `/launches/${tab}/${
+              tab === "upcoming" ? activePage : activePrevious
+            }`
+          );
+        }}
+      >
         <Tabs.List>
           <Tabs.Tab value="upcoming">
             <Text size="md" weight={500}>
@@ -196,6 +232,7 @@ const Launches = () => {
                 value={activePage}
                 onChange={(page) => {
                   setPage(page);
+                  navigate(`/launches/upcoming/${page}`);
                   window.scrollTo(0, 0);
                 }}
                 total={total_pages}
@@ -228,6 +265,7 @@ const Launches = () => {
                 value={activePrevious}
                 onChange={(page) => {
                   setPrevious(page);
+                  navigate(`/launches/previous/${page}`);
                   window.scrollTo(0, 0);
                 }}
                 total={previous_pages}
