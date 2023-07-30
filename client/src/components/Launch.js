@@ -80,6 +80,66 @@ export default function Launch() {
                         <Text fz="md">{launch?.status?.name}</Text>
                       </td>
                     </tr>
+                    <tr key="status">
+                      <td style={{ minWidth: "30%" }}>
+                        <Text fw={700} fz="md">
+                          Launch Agency
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">
+                          {launch?.launch_service_provider?.name}
+                        </Text>
+                      </td>
+                    </tr>
+                    {launch?.vidURLs?.length > 0 ? (
+                      <tr key="watch">
+                        <td style={{ minWidth: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Launch Video
+                          </Text>
+                        </td>
+                        <td>
+                          {launch?.vidURLs?.map((vidURL, i) => {
+                            return (
+                              <Anchor href={vidURL?.url} key={i}>
+                                <Text fz="md">
+                                  {vidURL?.title !== ""
+                                    ? vidURL?.title
+                                    : "Link"}
+                                </Text>
+                              </Anchor>
+                            );
+                          })}
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.infoURLs?.length > 0 ? (
+                      <tr key="watch">
+                        <td style={{ minWidth: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Information URLs
+                          </Text>
+                        </td>
+                        <td>
+                          {launch?.infoURLs?.map((infoURL, i) => {
+                            return (
+                              <Anchor href={infoURL?.url} key={i}>
+                                <Text fz="md">
+                                  {infoURL?.title !== ""
+                                    ? infoURL?.title
+                                    : "Link"}
+                                </Text>
+                              </Anchor>
+                            );
+                          })}
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
                     <tr key="coutry">
                       <td>
                         <Text fw={700} fz="md">
@@ -88,22 +148,21 @@ export default function Launch() {
                       </td>
                       <td>
                         <Text fz="md">
-                          {launch?.launch_service_provider?.country_code &&
-                          launch?.launch_service_provider?.country_code
-                            ?.length > 3
+                          {launch?.pad?.country_code &&
+                          launch?.pad?.country_code?.length > 3
                             ? "Multiple"
-                            : countries[
-                                launch?.launch_service_provider?.country_code
-                              ]?.name}
+                            : countries[launch?.pad?.country_code]?.name}
                         </Text>
                       </td>
                     </tr>
                   </tbody>
                 </Table>
+
                 <Title
-                  order={4}
+                  order={3}
                   style={{ marginTop: "30px", marginBottom: "10px" }}
                   ta="center"
+                  underline
                 >
                   Mission
                 </Title>
@@ -151,10 +210,113 @@ export default function Launch() {
                     </tr>
                   </tbody>
                 </Table>
+                {launch?.rocket?.spacecraft_stage?.spacecraft ? (
+                  <>
+                    <Title
+                      order={3}
+                      style={{ marginTop: "30px", marginBottom: "10px" }}
+                      ta="center"
+                      underline
+                    >
+                      Spacecraft
+                    </Title>
+                    <Table>
+                      <tbody>
+                        {launch?.rocket?.spacecraft_stage?.spacecraft?.name !==
+                        "" ? (
+                          <tr key="spacecraftname">
+                            <td style={{ minWidth: "30%" }}>
+                              <Text fw={700} fz="md">
+                                Spacecraft Name
+                              </Text>
+                            </td>
+                            <td>
+                              <Text fz="md">
+                                {
+                                  launch?.rocket?.spacecraft_stage?.spacecraft
+                                    ?.name
+                                }
+                              </Text>
+                            </td>
+                          </tr>
+                        ) : (
+                          <></>
+                        )}
+                        {launch?.rocket?.spacecraft_stage?.spacecraft
+                          ?.description !== "" ? (
+                          <tr key="spacecraftname">
+                            <td style={{ minWidth: "30%" }}>
+                              <Text fw={700} fz="md">
+                                Spacecraft Description
+                              </Text>
+                            </td>
+                            <td>
+                              <Text fz="md">
+                                {
+                                  launch?.rocket?.spacecraft_stage?.spacecraft
+                                    ?.description
+                                }
+                              </Text>
+                            </td>
+                          </tr>
+                        ) : (
+                          <></>
+                        )}
+                        {launch?.rocket?.spacecraft_stage?.destination !==
+                        "" ? (
+                          <tr key="spacecraftname">
+                            <td style={{ minWidth: "30%" }}>
+                              <Text fw={700} fz="md">
+                                Spacecraft Destination
+                              </Text>
+                            </td>
+                            <td>
+                              <Text fz="md">
+                                {launch?.rocket?.spacecraft_stage?.destination}
+                              </Text>
+                            </td>
+                          </tr>
+                        ) : (
+                          <></>
+                        )}
+                        {launch?.rocket?.spacecraft_stage?.launch_crew?.length >
+                        0 ? (
+                          <tr key="spacecraftname">
+                            <td style={{ minWidth: "30%" }}>
+                              <Text fw={700} fz="md">
+                                Crew
+                              </Text>
+                            </td>
+                            <td>
+                              {launch?.rocket?.spacecraft_stage?.launch_crew?.map(
+                                (crew, id) => {
+                                  return (
+                                    <>
+                                      <Text fz="md" key={id}>
+                                        {id + 1}. {crew?.astronaut?.name} (
+                                        {crew?.role?.role})
+                                      </Text>
+                                    </>
+                                  );
+                                }
+                              )}
+                            </td>
+                          </tr>
+                        ) : (
+                          <></>
+                        )}
+                      </tbody>
+                    </Table>
+                  </>
+                ) : (
+                  <></>
+                )}
+
                 <Title
-                  order={4}
+                  order={3}
                   style={{ marginTop: "30px", marginBottom: "10px" }}
                   ta="center"
+                  underline
                 >
                   Launch Vehicle
                 </Title>
@@ -162,7 +324,7 @@ export default function Launch() {
                 <Table style={{ marginTop: "10px" }} width="sm">
                   <tbody>
                     {launch?.rocket?.configuration?.wiki_url ? (
-                      <tr key="cost">
+                      <tr key="wiki_url">
                         <td>
                           <Text fw={700} fz="md">
                             Launch Vehicle Name
@@ -182,6 +344,144 @@ export default function Launch() {
                     ) : (
                       <></>
                     )}
+                    {launch?.rocket?.configuration?.description ? (
+                      <tr key="lvdescription">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Launch Vehicle Description
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.rocket?.configuration?.description}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.rocket?.configuration?.manufacturer?.name ? (
+                      <tr key="lvmanufacturer">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Manufacturer
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.rocket?.configuration?.manufacturer?.name}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.rocket?.configuration?.leo_capacity ? (
+                      <tr key="leo_capacity">
+                        <td>
+                          <Text fw={700} fz="md">
+                            LEO Capacity
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.rocket?.configuration?.leo_capacity} kg
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.rocket?.configuration?.gto_capacity ? (
+                      <tr key="gto_capacity">
+                        <td>
+                          <Text fw={700} fz="md">
+                            GTO Capacity
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.rocket?.configuration?.gto_capacity} kg
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.rocket?.configuration?.to_thrust ? (
+                      <tr key="to_thrust">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Lift-off Thrust
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.rocket?.configuration?.to_thrust} kN
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.rocket?.configuration?.reusable ? (
+                      <tr key="reusable">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Reusable
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">Yes</Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key="reusable">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Reusable
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">No</Text>
+                        </td>
+                      </tr>
+                    )}
+                    {launch?.rocket?.configuration?.launch_cost ? (
+                      <tr key="cost">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Launch Cost
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            $
+                            {formatNumber(
+                              launch?.rocket?.configuration?.launch_cost
+                            )}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.rocket?.configuration?.total_launch_count ? (
+                      <tr key="lvname">
+                        <td>
+                          <Text fw={700} fz="md">
+                            Total Launch Count
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.rocket?.configuration?.total_launch_count}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
                     <tr key="success">
                       <td style={{ minWidth: "30%" }}>
                         <Text fw={700} fz="md">
@@ -189,7 +489,7 @@ export default function Launch() {
                         </Text>
                       </td>
                       <td>
-                        <Text fw={700} fz="md">
+                        <Text fw={700} fz="md" style={{ marginTop: "0px" }}>
                           <Progress
                             value={(
                               (launch?.rocket?.configuration
@@ -212,25 +512,6 @@ export default function Launch() {
                         </Text>
                       </td>
                     </tr>
-                    {launch?.rocket?.configuration?.launch_cost ? (
-                      <tr key="cost">
-                        <td>
-                          <Text fw={700} fz="md">
-                            Launch Cost
-                          </Text>
-                        </td>
-                        <td>
-                          <Text fz="md">
-                            $
-                            {formatNumber(
-                              launch?.rocket?.configuration?.launch_cost
-                            )}
-                          </Text>
-                        </td>
-                      </tr>
-                    ) : (
-                      <></>
-                    )}
                   </tbody>
                 </Table>
               </>
