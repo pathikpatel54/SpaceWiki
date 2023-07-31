@@ -1,5 +1,6 @@
 import {
   Anchor,
+  Button,
   Container,
   Divider,
   Grid,
@@ -14,27 +15,33 @@ import {
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchLaunch, selectAllSpace } from "../features/auth/spaceSlice";
+import {
+  clearLaunch,
+  fetchLaunch,
+  fetchSideLaunches,
+  selectAllSpace,
+} from "../features/auth/spaceSlice";
 import { countries } from "country-data";
 import formatNumber from "../utils/number";
 import { useMediaQuery } from "@mantine/hooks";
-import Test from "./Sides";
-
-const columns = [
-  { name: "Name", key: "name", width: 150 }, // Setting the width to 150 pixels
-  { name: "Age", key: "age", width: 80 }, // Setting the width to 80 pixels
-];
+import Sides from "./Sides";
 
 export default function Launch() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const space = useSelector(selectAllSpace);
   const matches = useMediaQuery("(min-width: 1200px)");
-  const { launch, launchidstatus } = space;
+  const { launch, launchidstatus, sides, sidesstatus } = space;
 
   useEffect(() => {
     dispatch(fetchLaunch(id));
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    if (launch?.launch_service_provider?.name) {
+      dispatch(fetchSideLaunches(launch?.launch_service_provider?.name));
+    }
+  }, [launch?.launch_service_provider?.name]);
 
   return (
     <Container size={matches ? "85%" : "lg"}>
@@ -57,6 +64,11 @@ export default function Launch() {
                 <Divider mb="lg" />
                 <Image radius="xs" src={launch.image} />
                 <Divider mt="lg" mb="lg" />
+                <Button fullWidth radius="xs" onClick={() => {
+                  
+                }}>
+                  Subscribe to status updates
+                </Button>
                 <Table style={{ marginTop: "10px" }}>
                   <tbody>
                     <tr key="window">
@@ -751,7 +763,7 @@ export default function Launch() {
               More Launches from Agency
             </Title>
             <Divider mb="lg" />
-            <Test></Test>
+            <Sides sides={sides} sidesstatus={sidesstatus}></Sides>
           </Paper>
         </Grid.Col>
       </Grid>

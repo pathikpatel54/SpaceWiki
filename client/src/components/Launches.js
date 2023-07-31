@@ -15,6 +15,7 @@ import {
 import {
   fetchLaunches,
   fetchPreviousLaunches,
+  fetchSideLaunches,
   searchLaunches,
   selectAllSpace,
 } from "../features/auth/spaceSlice";
@@ -125,7 +126,6 @@ const Launches = () => {
     activePrevious,
     6
   );
-
 
   const renderLaunches = upcomingData?.map((launch) => {
     return (

@@ -1,109 +1,81 @@
-import {
-  createStyles,
-  Group,
-  Paper,
-  Text,
-  ThemeIcon,
-  SimpleGrid,
-} from "@mantine/core";
-import { IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react";
+import { createStyles, Paper, Text, Image, Grid, Loader } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   label: {
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
   },
+
+  card: {
+    transition: "transform 150ms ease, box-shadow 150ms ease",
+    "&:hover": {
+      transform: "scale(1.01)",
+      boxShadow: theme.shadows.md,
+    },
+  },
 }));
 
-const data = [
-  {
-    title: "Revenue",
-    value: "$13,456",
-    diff: 34,
-  },
-  {
-    title: "Profit",
-    value: "$4,145",
-    diff: -13,
-  },
-  {
-    title: "Coupons usage",
-    value: "745",
-    diff: 18,
-  },
-  {
-    title: "Revenue",
-    value: "$13,456",
-    diff: 34,
-  },
-  {
-    title: "Profit",
-    value: "$4,145",
-    diff: -13,
-  },
-  {
-    title: "Coupons usage",
-    value: "745",
-    diff: 18,
-  },
-  {
-    title: "Revenue",
-    value: "$13,456",
-    diff: 34,
-  },
-  {
-    title: "Profit",
-    value: "$4,145",
-    diff: -13,
-  },
-  {
-    title: "Coupons usage",
-    value: "745",
-    diff: 18,
-  },
-];
-
-export default function Sides() {
+export default function Sides({ sides, sidesstatus }) {
   const { classes } = useStyles();
-  const stats = data.map((stat) => {
-    const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
-
+  const stats = sides.slice(0, 10).map((side) => {
     return (
-      <Paper withBorder p="md" radius="xs" key={stat.title} mb="md">
-        <div>
-          <Text
-            c="dimmed"
-            tt="uppercase"
-            fw={700}
-            fz="xs"
-            className={classes.label}
-          >
-            {stat.title}
-          </Text>
-          <Text fw={700} fz="xl">
-            {stat.value}
-          </Text>
-        </div>
-        <ThemeIcon
-          color="gray"
-          variant="light"
-          sx={(theme) => ({
-            color: stat.diff > 0 ? theme.colors.teal[6] : theme.colors.red[6],
-          })}
-          size={38}
-          radius="md"
+      <Link to={`/launches/${side.id}`} style={{ textDecoration: "none" }}>
+        <Paper
+          withBorder
+          p="md"
+          radius="xs"
+          key={side.name}
+          mb="md"
+          className={classes.card}
         >
-          <DiffIcon size="1.8rem" stroke={1.5} />
-        </ThemeIcon>
-
-        <Text c="dimmed" fz="sm" mt="md">
-          <Text component="span" c={stat.diff > 0 ? "teal" : "red"} fw={700}>
-            {stat.diff}%
-          </Text>{" "}
-          {stat.diff > 0 ? "increase" : "decrease"} compared to last month
-        </Text>
-      </Paper>
+          <Grid>
+            <Grid.Col span={4}>
+              {" "}
+              <Image
+                mx="auto"
+                radius="xs"
+                src={side.image}
+                alt="Random image"
+              />
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <>
+                <div>
+                  <Text fw={700} fz="xl" style={{ marginTop: "-4px" }}>
+                    {side.name}
+                  </Text>
+                  <Text
+                    c="dimmed"
+                    tt="uppercase"
+                    fw={700}
+                    fz="xs"
+                    className={classes.label}
+                  >
+                    {new Date(side?.window_start).toLocaleString()}
+                  </Text>
+                </div>
+                <Text fz="sm" mt="md">
+                  <Text component="span" fw={700}>
+                    {side?.status?.name}
+                  </Text>
+                </Text>
+              </>
+            </Grid.Col>
+          </Grid>
+        </Paper>
+      </Link>
     );
   });
 
-  return <div className={classes.root}>{stats}</div>;
+  return (
+    <div className={classes.root}>
+      {sidesstatus === "pending" ? (
+        <div style={{ textAlign: "center" }}>
+          <Loader />
+        </div>
+      ) : (
+        stats
+      )}
+    </div>
+  );
 }

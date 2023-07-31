@@ -6,11 +6,13 @@ const initialState = {
   launches: [],
   events: [],
   previous_launches: [],
+  sides: [],
   launchidstatus: "idle",
   launchstatus: "idle",
   eventstatus: "idle",
   previous_launchesstatus: "idle",
   searchstatus: "idle",
+  sidesstatus: "idle",
   error: "",
 };
 
@@ -35,6 +37,14 @@ export const searchLaunches = createAsyncThunk(
   }
 );
 
+export const fetchSideLaunches = createAsyncThunk(
+  "space/fetchSideLaunches",
+  async (keyword) => {
+    const response = await axios.get(`/api/launches?keyword=${keyword}`);
+    return response.data;
+  }
+);
+
 export const fetchPreviousLaunches = createAsyncThunk(
   "space/fetchPreviousLaunches",
   async () => {
@@ -51,12 +61,20 @@ export const fetchEvents = createAsyncThunk("space/fetchEvents", async () => {
 const spaceSlice = createSlice({
   name: "space",
   initialState,
-  reducers: {},
+  reducers: {
+    clearLaunch: (state) => {
+      state.launchidstatus = "idle";
+      state.launch = {};
+      state.error = "";
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchLaunches.pending, (state) => {
         state.launchstatus = "pending";
         state.launches = [];
+        state.sides = [];
+        state.launch = {};
         state.error = "";
       })
       .addCase(fetchLaunches.fulfilled, (state, action) => {
@@ -82,6 +100,20 @@ const spaceSlice = createSlice({
       .addCase(fetchLaunch.rejected, (state, action) => {
         state.launchidstatus = "rejected";
         state.launch = {};
+        state.error = action.error.message;
+      })
+      .addCase(fetchSideLaunches.pending, (state) => {
+        state.sidesstatus = "pending";
+        state.error = "";
+      })
+      .addCase(fetchSideLaunches.fulfilled, (state, action) => {
+        state.sidesstatus = "fulfilled";
+        state.sides = action.payload;
+        state.error = "";
+      })
+      .addCase(fetchSideLaunches.rejected, (state, action) => {
+        state.sidesstatus = "rejected";
+        state.sides = [];
         state.error = action.error.message;
       })
       .addCase(searchLaunches.pending, (state) => {
@@ -132,5 +164,5 @@ const spaceSlice = createSlice({
 });
 
 export const selectAllSpace = (state) => state.space;
-
+export const { clearLaunch } = spaceSlice.actions;
 export default spaceSlice.reducer;
