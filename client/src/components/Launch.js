@@ -17,6 +17,8 @@ import { useParams } from "react-router-dom";
 import { fetchLaunch, selectAllSpace } from "../features/auth/spaceSlice";
 import { countries } from "country-data";
 import formatNumber from "../utils/number";
+import { useMediaQuery } from "@mantine/hooks";
+import Test from "./Sides";
 
 const columns = [
   { name: "Name", key: "name", width: 150 }, // Setting the width to 150 pixels
@@ -27,7 +29,7 @@ export default function Launch() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const space = useSelector(selectAllSpace);
-
+  const matches = useMediaQuery("(min-width: 1200px)");
   const { launch, launchidstatus } = space;
 
   useEffect(() => {
@@ -35,9 +37,9 @@ export default function Launch() {
   }, []);
 
   return (
-    <Container size="lg">
+    <Container size={matches ? "85%" : "lg"}>
       <Grid grow gutter="xs">
-        <Grid.Col sm={7} md={7} lg={9}>
+        <Grid.Col sm={7} md={7} lg={8}>
           <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
             {launchidstatus === "pending" ? (
               <div style={{ textAlign: "center" }}>
@@ -71,7 +73,7 @@ export default function Launch() {
                       </td>
                     </tr>
                     <tr key="status">
-                      <td style={{ minWidth: "30%" }}>
+                      <td style={{ width: "30%" }}>
                         <Text fw={700} fz="md">
                           Status
                         </Text>
@@ -81,7 +83,7 @@ export default function Launch() {
                       </td>
                     </tr>
                     <tr key="status">
-                      <td style={{ minWidth: "30%" }}>
+                      <td style={{ width: "30%" }}>
                         <Text fw={700} fz="md">
                           Launch Agency
                         </Text>
@@ -94,7 +96,7 @@ export default function Launch() {
                     </tr>
                     {launch?.vidURLs?.length > 0 ? (
                       <tr key="watch">
-                        <td style={{ minWidth: "30%" }}>
+                        <td style={{ width: "30%" }}>
                           <Text fw={700} fz="md">
                             Launch Video
                           </Text>
@@ -118,7 +120,7 @@ export default function Launch() {
                     )}
                     {launch?.infoURLs?.length > 0 ? (
                       <tr key="watch">
-                        <td style={{ minWidth: "30%" }}>
+                        <td style={{ width: "30%" }}>
                           <Text fw={700} fz="md">
                             Information URLs
                           </Text>
@@ -169,7 +171,7 @@ export default function Launch() {
                 <Table style={{ marginTop: "10px" }}>
                   <tbody>
                     <tr key="mission">
-                      <td style={{ minWidth: "30%" }}>
+                      <td style={{ width: "30%" }}>
                         <Text fw={700} fz="md">
                           Mission Name
                         </Text>
@@ -225,7 +227,7 @@ export default function Launch() {
                         {launch?.rocket?.spacecraft_stage?.spacecraft?.name !==
                         "" ? (
                           <tr key="spacecraftname">
-                            <td style={{ minWidth: "30%" }}>
+                            <td style={{ width: "30%" }}>
                               <Text fw={700} fz="md">
                                 Spacecraft Name
                               </Text>
@@ -245,7 +247,7 @@ export default function Launch() {
                         {launch?.rocket?.spacecraft_stage?.spacecraft
                           ?.description !== "" ? (
                           <tr key="spacecraftname">
-                            <td style={{ minWidth: "30%" }}>
+                            <td style={{ width: "30%" }}>
                               <Text fw={700} fz="md">
                                 Spacecraft Description
                               </Text>
@@ -265,7 +267,7 @@ export default function Launch() {
                         {launch?.rocket?.spacecraft_stage?.destination !==
                         "" ? (
                           <tr key="spacecraftname">
-                            <td style={{ minWidth: "30%" }}>
+                            <td style={{ width: "30%" }}>
                               <Text fw={700} fz="md">
                                 Spacecraft Destination
                               </Text>
@@ -282,7 +284,7 @@ export default function Launch() {
                         {launch?.rocket?.spacecraft_stage?.spacecraft
                           ?.spacecraft_config?.crew_capacity !== null ? (
                           <tr key="spacecraftcrewcapacity">
-                            <td style={{ minWidth: "30%" }}>
+                            <td style={{ width: "30%" }}>
                               <Text fw={700} fz="md">
                                 Spacecraft Crew Capacity
                               </Text>
@@ -302,7 +304,7 @@ export default function Launch() {
                         {launch?.rocket?.spacecraft_stage?.spacecraft
                           ?.spacecraft_config?.payload_capacity !== null ? (
                           <tr key="spacecraftcrewcapacity">
-                            <td style={{ minWidth: "30%" }}>
+                            <td style={{ width: "30%" }}>
                               <Text fw={700} fz="md">
                                 Spacecraft Payload Capacity
                               </Text>
@@ -322,7 +324,7 @@ export default function Launch() {
                         {launch?.rocket?.spacecraft_stage?.launch_crew?.length >
                         0 ? (
                           <tr key="spacecraftname">
-                            <td style={{ minWidth: "30%" }}>
+                            <td style={{ width: "30%" }}>
                               <Text fw={700} fz="md">
                                 Crew
                               </Text>
@@ -523,7 +525,7 @@ export default function Launch() {
                       <></>
                     )}
                     <tr key="success">
-                      <td style={{ minWidth: "30%" }}>
+                      <td style={{ width: "30%" }}>
                         <Text fw={700} fz="md">
                           Launch Success Rate
                         </Text>
@@ -566,7 +568,7 @@ export default function Launch() {
                   <tbody>
                     {launch?.launch_service_provider?.name ? (
                       <tr key="lspname">
-                        <td style={{ minWidth: "30%" }}>
+                        <td style={{ width: "30%" }}>
                           <Text fw={700} fz="md">
                             Name
                           </Text>
@@ -582,7 +584,7 @@ export default function Launch() {
                     )}
                     {launch?.launch_service_provider?.type ? (
                       <tr key="lsptype">
-                        <td style={{ minWidth: "30%" }}>
+                        <td style={{ width: "30%" }}>
                           <Text fw={700} fz="md">
                             Type
                           </Text>
@@ -598,14 +600,83 @@ export default function Launch() {
                     )}
                     {launch?.launch_service_provider?.description ? (
                       <tr key="lspdescription">
-                        <td style={{ minWidth: "30%" }}>
+                        <td style={{ width: "30%" }}>
                           <Text fw={700} fz="md">
-                            Launch Service Provider Description
+                            Description
                           </Text>
                         </td>
                         <td>
                           <Text fz="md">
                             {launch?.launch_service_provider?.description}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.launch_service_provider?.administrator ? (
+                      <tr key="lspadministrator">
+                        <td style={{ width: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Administrator
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {launch?.launch_service_provider?.administrator}
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.launch_service_provider?.total_launch_count ? (
+                      <tr key="lsplaunchcount">
+                        <td style={{ width: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Total Launches
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">
+                            {
+                              launch?.launch_service_provider
+                                ?.total_launch_count
+                            }
+                          </Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.launch_service_provider?.total_launch_count ? (
+                      <tr key="lsplaunchcount">
+                        <td style={{ width: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Launch Success Rate
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fw={700} fz="md" style={{ marginTop: "0px" }}>
+                            <Progress
+                              value={(
+                                (launch?.launch_service_provider
+                                  ?.successful_launches /
+                                  launch?.launch_service_provider
+                                    ?.total_launch_count) *
+                                100
+                              ).toFixed(2)}
+                              label={`${(
+                                (launch?.launch_service_provider
+                                  ?.successful_launches /
+                                  launch?.launch_service_provider
+                                    ?.total_launch_count) *
+                                100
+                              ).toFixed(2)}%`}
+                              size={20}
+                              radius="xs"
+                              fz="xl"
+                            />
                           </Text>
                         </td>
                       </tr>
@@ -622,12 +693,66 @@ export default function Launch() {
                 >
                   Launchpad
                 </Title>
+                <Table>
+                  <tbody>
+                    {launch?.pad?.name ? (
+                      <tr key="launchpadname">
+                        <td style={{ width: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Name
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">{launch?.pad?.name}</Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.pad?.total_launch_count ? (
+                      <tr key="launchpadtotallaunches">
+                        <td style={{ width: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Total Launch Count
+                          </Text>
+                        </td>
+                        <td>
+                          <Text fz="md">{launch?.pad?.total_launch_count}</Text>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                    {launch?.pad?.map_url ? (
+                      <tr key="launchpadtotallaunches">
+                        <td style={{ width: "30%" }}>
+                          <Text fw={700} fz="md">
+                            Map URL
+                          </Text>
+                        </td>
+                        <td>
+                          <Anchor href={launch?.pad?.map_url} target="_blank">
+                            <Text fz="md">{launch?.pad?.map_url}</Text>
+                          </Anchor>
+                        </td>
+                      </tr>
+                    ) : (
+                      <></>
+                    )}
+                  </tbody>
+                </Table>
               </>
             )}
           </Paper>
         </Grid.Col>
-        <Grid.Col sm={5} md={5} lg={3}>
-          <Paper style={{ marginTop: "2rem", padding: "1rem" }}></Paper>
+        <Grid.Col sm={5} md={5} lg={4}>
+          <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
+            <Title order={4} style={{ marginTop: "5px", marginBottom: "10px" }}>
+              More Launches from Agency
+            </Title>
+            <Divider mb="lg" />
+            <Test></Test>
+          </Paper>
         </Grid.Col>
       </Grid>
     </Container>

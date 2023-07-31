@@ -40,7 +40,7 @@ const Launches = () => {
   const [activePage, setPage] = useState(1);
   const [activePrevious, setPrevious] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-  const [value, setValue] = useState([Date | null, Date | null]);
+  const [value, setValue] = useState([null, null]);
   const debouncedSearchInput = useDebounce(searchInput, 500);
   const isFirstRender = useRef(true);
   const path = useLocation();
@@ -49,7 +49,7 @@ const Launches = () => {
   const [searchParams, _] = useSearchParams();
   const page = Number(searchParams.get("page"));
   const search = searchParams.get("search");
-
+  let filtered = [];
   useEffect(() => {
     if (search === null || search === "") {
       dispatch(fetchLaunches());
@@ -106,8 +106,16 @@ const Launches = () => {
     searchstatus,
   } = space;
 
+  filtered = upcomingLaunch;
+  if (value[0] !== null && value[1] !== null) {
+    filtered = upcomingLaunch.filter((launch) => {
+      const inputDate = new Date(launch?.net);
+      return inputDate >= value[0] && inputDate <= value[1];
+    });
+  }
+
   const { data: upcomingData, total_pages } = Paginator(
-    upcomingLaunch,
+    filtered,
     activePage,
     6
   );
@@ -117,6 +125,7 @@ const Launches = () => {
     activePrevious,
     6
   );
+
 
   const renderLaunches = upcomingData?.map((launch) => {
     return (
@@ -230,6 +239,13 @@ const Launches = () => {
               value={value}
               onChange={setValue}
               radius="xs"
+              rightSection={
+                value[0] === null && value[1] === null ? (
+                  <></>
+                ) : (
+                  <CloseButton onClick={() => setValue([null, null])} />
+                )
+              }
             />
           </Group>
 
