@@ -13,6 +13,8 @@ const initialState = {
   previous_launchesstatus: "idle",
   searchstatus: "idle",
   sidesstatus: "idle",
+  alertstatus: "idle",
+  alerterror: "",
   error: "",
 };
 
@@ -57,6 +59,14 @@ export const fetchEvents = createAsyncThunk("space/fetchEvents", async () => {
   const response = await axios.get("/api/events");
   return response.data;
 });
+
+export const postAlerts = createAsyncThunk(
+  "space/postAlerts",
+  async (alert) => {
+    const response = await axios.post(`/api/subscriptions/`, alert);
+    return response.data;
+  }
+);
 
 const spaceSlice = createSlice({
   name: "space",
@@ -159,6 +169,18 @@ const spaceSlice = createSlice({
         state.previous_launchesstatus = "rejected";
         state.previous_launches = [];
         state.error = action.error.message;
+      })
+      .addCase(postAlerts.pending, (state, action) => {
+        state.alertstatus = "pending";
+        state.alerterror = "";
+      })
+      .addCase(postAlerts.fulfilled, (state, action) => {
+        state.alertstatus = "fulfilled";
+        state.alerterror = "";
+      })
+      .addCase(postAlerts.rejected, (state, action) => {
+        state.alertstatus = "rejected";
+        state.alerterror = action.error.message;
       });
   },
 });

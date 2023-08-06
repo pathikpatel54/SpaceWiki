@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import Landing from "./Landing";
 import Launches from "./Launches";
 import Launch from "./Launch";
+import { Notifications } from "@mantine/notifications";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const App = () => {
       withGlobalStyles
       withNormalizeCSS
     >
+      <Notifications />
       <BrowserRouter>
         <Header />
         <Routes>

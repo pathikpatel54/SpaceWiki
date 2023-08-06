@@ -18,7 +18,7 @@ import {
   fetchSideLaunches,
   searchLaunches,
   selectAllSpace,
-} from "../features/auth/spaceSlice";
+} from "../features/space/spaceSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import {

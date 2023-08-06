@@ -15,7 +15,7 @@ import {
   fetchEvents,
   fetchLaunches,
   selectAllSpace,
-} from "../features/auth/spaceSlice";
+} from "../features/space/spaceSlice";
 import Cards from "./Cards";
 import { IconArrowRight } from "@tabler/icons-react";
 

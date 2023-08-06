@@ -19,19 +19,30 @@ import {
   clearLaunch,
   fetchLaunch,
   fetchSideLaunches,
+  postAlerts,
   selectAllSpace,
-} from "../features/auth/spaceSlice";
+} from "../features/space/spaceSlice";
 import { countries } from "country-data";
 import formatNumber from "../utils/number";
 import { useMediaQuery } from "@mantine/hooks";
 import Sides from "./Sides";
+import { selectAllAuth } from "../features/auth/authSlice";
+import { notifications } from "@mantine/notifications";
 
 export default function Launch() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const space = useSelector(selectAllSpace);
+  const user = useSelector(selectAllAuth);
   const matches = useMediaQuery("(min-width: 1200px)");
-  const { launch, launchidstatus, sides, sidesstatus } = space;
+  const {
+    launch,
+    launchidstatus,
+    sides,
+    sidesstatus,
+    alertstatus,
+    alerterror,
+  } = space;
 
   useEffect(() => {
     dispatch(fetchLaunch(id));
@@ -42,6 +53,40 @@ export default function Launch() {
       dispatch(fetchSideLaunches(launch?.launch_service_provider?.name));
     }
   }, [launch?.launch_service_provider?.name]);
+
+  useEffect(() => {
+    if (alertstatus == "pending") {
+      notifications.clean();
+      notifications.show({
+        id: "subscribe",
+        loading: true,
+        title: "Adding Subscription",
+        message: "Please wait while your subscription is being added",
+        autoClose: false,
+        withCloseButton: false,
+      });
+    } else if (alertstatus == "fulfilled") {
+      notifications.update({
+        id: "subscribe",
+        color: "teal",
+        title: "Subscribed",
+        message: "Your subscription was successful",
+        icon: <IconCheck size="1rem" />,
+        autoClose: 2000,
+      });
+    } else if(alertstatus == "rejected") {
+      
+    }
+  }, alertstatus);
+
+  const onSubscribeClick = () => {
+    const alert = {
+      users: [user?.email],
+      launch_id: launch?.id,
+      status: launch?.status,
+    };
+    dispatch(postAlerts(alert));
+  };
 
   return (
     <Container size={matches ? "85%" : "lg"}>
@@ -64,11 +109,13 @@ export default function Launch() {
                 <Divider mb="lg" />
                 <Image radius="xs" src={launch.image} />
                 <Divider mt="lg" mb="lg" />
-                <Button fullWidth radius="xs" onClick={() => {
-                  
-                }}>
-                  Subscribe to status updates
-                </Button>
+                {launch?.status?.name == "To Be Confirmed" ? (
+                  <Button fullWidth radius="xs" onClick={onSubscribeClick}>
+                    Subscribe to status updates
+                  </Button>
+                ) : (
+                  <></>
+                )}
                 <Table style={{ marginTop: "10px" }}>
                   <tbody>
                     <tr key="window">

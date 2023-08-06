@@ -208,6 +208,13 @@ func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
 		return
 	}
 
+	logged, loggedUser := isLoggedIn(ctx, c.db)
+
+	if !logged || len(request.Users) == 0 || request.Users[0] != loggedUser.Email {
+		ctx.String(http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
 	// Check if subscription with the same Launch ID exists
 	var subscriptionID int
 	var usersStr string
@@ -223,7 +230,7 @@ func (c *SpaceController) CreateSubscription(ctx *gin.Context) {
 		exists := false
 		users := strings.Split(usersStr[1:len(usersStr)-1], ",") // Convert string to []string
 		for _, user := range users {
-			if user == request.Users[0] {
+			if user == request.Users[0] && loggedUser.Email == user {
 				exists = true
 				break
 			}
