@@ -3,9 +3,6 @@ import {
   Card,
   Image,
   Text,
-  Group,
-  rem,
-  Flex,
   AspectRatio,
 } from "@mantine/core";
 

@@ -15,7 +15,6 @@ import {
 import {
   fetchLaunches,
   fetchPreviousLaunches,
-  fetchSideLaunches,
   searchLaunches,
   selectAllSpace,
 } from "../features/space/spaceSlice";

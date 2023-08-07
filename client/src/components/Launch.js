@@ -16,7 +16,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
-  clearLaunch,
   fetchLaunch,
   fetchSideLaunches,
   postAlerts,
@@ -28,6 +27,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import Sides from "./Sides";
 import { selectAllAuth } from "../features/auth/authSlice";
 import { notifications } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export default function Launch() {
   const { id } = useParams();
@@ -64,6 +64,7 @@ export default function Launch() {
         message: "Please wait while your subscription is being added",
         autoClose: false,
         withCloseButton: false,
+    
       });
     } else if (alertstatus == "fulfilled") {
       notifications.update({
@@ -74,10 +75,17 @@ export default function Launch() {
         icon: <IconCheck size="1rem" />,
         autoClose: 2000,
       });
-    } else if(alertstatus == "rejected") {
-      
+    } else if (alertstatus == "rejected") {
+      notifications.update({
+        id: "subscribe",
+        color: "red",
+        title: "Error",
+        message: "An error occured while subscribing to the request",
+        icon: <IconX size="1rem" />,
+        autoClose: 2000,
+      });
     }
-  }, alertstatus);
+  }, [alertstatus]);
 
   const onSubscribeClick = () => {
     const alert = {

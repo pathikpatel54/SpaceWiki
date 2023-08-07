@@ -24,7 +24,7 @@ const App = () => {
       withGlobalStyles
       withNormalizeCSS
     >
-      <Notifications />
+      <Notifications position="bottom-center" />
       <BrowserRouter>
         <Header />
         <Routes>

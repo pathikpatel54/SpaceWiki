@@ -2,7 +2,6 @@ import {
   createStyles,
   Text,
   Card,
-  RingProgress,
   Group,
   rem,
   AspectRatio,
