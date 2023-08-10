@@ -199,7 +199,7 @@ func isLoggedIn(c *gin.Context, db *sql.DB) (bool, *models.User) {
 	err = row.Scan(&user.GoogleID, &user.Email, &user.VerifiedEmail, &user.Name, &user.GivenName, &user.FamilyName, &user.Picture, &user.Locale)
 
 	if err != nil {
-		log.Println("Error retrieving User")
+		log.Println("Error retrieving User", err.Error())
 		return false, &models.User{}
 	}
 

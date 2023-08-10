@@ -62,7 +62,7 @@ const LandingPage = ({ user }) => {
   return (
     <Container size="lg" style={{ textAlign: "center", padding: "2rem" }}>
       <Title order={2}>Welcome back, {user.name}!</Title>
-      <Paper style={{ marginTop: "2rem", padding: "1rem" }}>
+      <Paper style={{ marginTop: "2rem", padding: "1px" }}>
         <Text size="lg" weight={500} style={{ marginBottom: "1rem" }}>
           Upcoming Launches
         </Text>
