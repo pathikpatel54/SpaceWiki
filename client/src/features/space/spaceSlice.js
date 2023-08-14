@@ -3,6 +3,7 @@ import axios from "axios";
 
 const initialState = {
   launch: {},
+  event: {},
   launches: [],
   events: [],
   previous_launches: [],
@@ -15,6 +16,7 @@ const initialState = {
   searchstatus: "idle",
   sidesstatus: "idle",
   alertstatus: "idle",
+  eventidstatus: "idle",
   alerterror: "",
   error: "",
 };
@@ -58,6 +60,11 @@ export const fetchPreviousLaunches = createAsyncThunk(
 
 export const fetchEvents = createAsyncThunk("space/fetchEvents", async () => {
   const response = await axios.get("/api/events");
+  return response.data;
+});
+
+export const fetchEvent = createAsyncThunk("space/fetchEvent", async (id) => {
+  const response = await axios.get(`/api/events/${id}`);
   return response.data;
 });
 
@@ -162,6 +169,21 @@ const spaceSlice = createSlice({
       .addCase(fetchEvents.rejected, (state, action) => {
         state.eventstatus = "rejected";
         state.events = [];
+        state.error = action.error.message;
+      })
+      .addCase(fetchEvent.pending, (state) => {
+        state.eventidstatus = "pending";
+        state.event = {};
+        state.error = "";
+      })
+      .addCase(fetchEvent.fulfilled, (state, action) => {
+        state.eventidstatus = "fulfilled";
+        state.event = action.payload;
+        state.error = "";
+      })
+      .addCase(fetchEvent.rejected, (state, action) => {
+        state.eventidstatus = "rejected";
+        state.event = {};
         state.error = action.error.message;
       })
       .addCase(searchEvents.pending, (state) => {
