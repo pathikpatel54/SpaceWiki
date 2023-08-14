@@ -1,10 +1,4 @@
-import {
-  createStyles,
-  Card,
-  Image,
-  Text,
-  AspectRatio,
-} from "@mantine/core";
+import { createStyles, Card, Image, Text, AspectRatio } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -20,7 +14,7 @@ export default function Cards({ image, title, time }) {
   const { classes } = useStyles();
 
   return (
-    <Card p="md" radius="xs" component="a" href="#" className={classes.card}>
+    <Card p="xs" radius="xs" component="a" href="#" className={classes.card}>
       <AspectRatio ratio={1920 / 1080}>
         <Image src={image} />
       </AspectRatio>

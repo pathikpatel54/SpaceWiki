@@ -10,6 +10,7 @@ const initialState = {
   launchidstatus: "idle",
   launchstatus: "idle",
   eventstatus: "idle",
+  eventsearchstatus: "idle",
   previous_launchesstatus: "idle",
   searchstatus: "idle",
   sidesstatus: "idle",
@@ -59,6 +60,14 @@ export const fetchEvents = createAsyncThunk("space/fetchEvents", async () => {
   const response = await axios.get("/api/events");
   return response.data;
 });
+
+export const searchEvents = createAsyncThunk(
+  "space/searchEvents",
+  async (keyword) => {
+    const response = await axios.get(`/api/events?keyword=${keyword}`);
+    return response.data;
+  }
+);
 
 export const postAlerts = createAsyncThunk(
   "space/postAlerts",
@@ -152,6 +161,20 @@ const spaceSlice = createSlice({
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.eventstatus = "rejected";
+        state.events = [];
+        state.error = action.error.message;
+      })
+      .addCase(searchEvents.pending, (state) => {
+        state.eventsearchstatus = "pending";
+        state.error = "";
+      })
+      .addCase(searchEvents.fulfilled, (state, action) => {
+        state.eventsearchstatus = "fulfilled";
+        state.events = action.payload;
+        state.error = "";
+      })
+      .addCase(searchEvents.rejected, (state, action) => {
+        state.eventsearchstatus = "rejected";
         state.events = [];
         state.error = action.error.message;
       })

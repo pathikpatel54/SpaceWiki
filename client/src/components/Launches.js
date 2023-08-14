@@ -24,7 +24,6 @@ import {
   Link,
   useLocation,
   useNavigate,
-  useParams,
   useSearchParams,
 } from "react-router-dom";
 import { Paginator } from "../utils/paginator";
@@ -50,6 +49,7 @@ const Launches = () => {
   const page = Number(searchParams.get("page"));
   const search = searchParams.get("search");
   let filtered = [];
+  
   useEffect(() => {
     if (search === null || search === "") {
       dispatch(fetchLaunches());

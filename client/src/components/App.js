@@ -9,6 +9,8 @@ import Landing from "./Landing";
 import Launches from "./Launches";
 import Launch from "./Launch";
 import { Notifications } from "@mantine/notifications";
+import Events from "./Events";
+import Event from "./Event";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -36,6 +38,8 @@ const App = () => {
           <Route path="/launches/upcoming" element={<Launches />} />
           <Route path="/launches/previous" element={<Launches />} />
           <Route path="/launches/:id" element={<Launch />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<Event />} />
         </Routes>
       </BrowserRouter>
     </MantineProvider>

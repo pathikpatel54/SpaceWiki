@@ -29,7 +29,7 @@ import { selectAllAuth } from "../features/auth/authSlice";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 
-export default function Launch() {
+export default function Event() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const space = useSelector(selectAllSpace);
@@ -41,7 +41,6 @@ export default function Launch() {
     sides,
     sidesstatus,
     alertstatus,
-    alerterror,
   } = space;
 
   useEffect(() => {

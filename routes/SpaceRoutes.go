@@ -379,3 +379,36 @@ func (c *SpaceController) GetLaunchID(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, jsonResult)
 }
+
+func (c *SpaceController) GetEventID(ctx *gin.Context) {
+	if logged, _ := isLoggedIn(ctx, c.db); !logged {
+		ctx.String(http.StatusUnauthorized, "")
+		return
+	}
+
+	eventID, ok := ctx.Params.Get("id")
+
+	if !ok {
+		ctx.String(http.StatusBadRequest, "")
+		return
+	}
+
+	query := fmt.Sprintf(`
+	SELECT event FROM api_data, 
+	jsonb_array_elements(api_data.events) AS event
+	WHERE (event->>'id') = '%s';`, eventID)
+
+	// Execute the query
+	row := c.db.QueryRow(query)
+
+	// Scan the result into a string
+	var jsonResult json.RawMessage
+
+	if err := row.Scan(&jsonResult); err != nil {
+		log.Printf("Failed to scan row: %v", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch data"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, jsonResult)
+}

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"spacealert/config"
+	"spacealert/databases"
 	"spacealert/models"
 	"spacealert/utils"
 	"time"
@@ -174,6 +175,16 @@ func isLoggedIn(c *gin.Context, db *sql.DB) (bool, *models.User) {
 	if err != nil {
 		log.Println(err.Error())
 		return false, &models.User{}
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Println(err.Error())
+		db, err = databases.ConnectDatabase()
+		if err != nil {
+			log.Println(err.Error())
+			return false, &models.User{}
+		}
 	}
 
 	row := db.QueryRow(`SELECT id, session_id, email, expires FROM sessions WHERE session_id = $1`, cookie)

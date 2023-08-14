@@ -116,7 +116,7 @@ func CheckLaunches(db *sql.DB) {
 					continue
 				}
 
-				if int(resultStatus["id"].(float64)) == 1 && subscription.Status.ID == 2 {
+				if int(resultStatus["id"].(float64)) == 1 && (subscription.Status.ID == 2 || subscription.Status.ID == 8) {
 					parsedLaunchTime, err := time.Parse(time.RFC3339, result["window_start"].(string))
 					if err != nil {
 						log.Fatal("Error parsing time:", err)
