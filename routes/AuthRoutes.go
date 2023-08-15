@@ -55,10 +55,9 @@ func init() {
 
 func (ac *AuthController) Login(c *gin.Context) {
 	scheme := "http://"
-	if c.Request.TLS != nil || os.Getenv("GO_ENV") == "production" {
+	if c.Request.TLS != nil {
 		scheme = "https://"
 	}
-	log.Println(c.Request)
 	googleOauthConfig.RedirectURL = scheme + c.Request.Host + "/auth/google/callback"
 	c.Redirect(http.StatusTemporaryRedirect, googleOauthConfig.AuthCodeURL(oauthstate))
 }
