@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"spacealert/config"
 	"spacealert/databases"
 	"spacealert/models"
@@ -54,10 +55,10 @@ func init() {
 
 func (ac *AuthController) Login(c *gin.Context) {
 	scheme := "http://"
-	if c.Request.TLS != nil {
+	if c.Request.TLS != nil || os.Getenv("GO_ENV") == "production" {
 		scheme = "https://"
 	}
-	log.Println(c.Request.URL.Scheme)
+	log.Println(c.Request)
 	googleOauthConfig.RedirectURL = scheme + c.Request.Host + "/auth/google/callback"
 	c.Redirect(http.StatusTemporaryRedirect, googleOauthConfig.AuthCodeURL(oauthstate))
 }
