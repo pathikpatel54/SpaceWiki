@@ -57,7 +57,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 	if c.Request.TLS != nil {
 		scheme = "https://"
 	}
-	log.Println(c.Request)
+	log.Println(c.Request.URL)
 	googleOauthConfig.RedirectURL = scheme + c.Request.Host + "/auth/google/callback"
 	c.Redirect(http.StatusTemporaryRedirect, googleOauthConfig.AuthCodeURL(oauthstate))
 }
