@@ -57,6 +57,16 @@ export default function Event() {
                 <Divider mt="lg" mb="lg" />
                 <Table style={{ marginTop: "10px" }}>
                   <tbody>
+                    <tr key="description">
+                      <td>
+                        <Text fw={700} fz="md">
+                          Description
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{event?.description}</Text>
+                      </td>
+                    </tr>
                     <tr key="window">
                       <td>
                         <Text fw={700} fz="md">
@@ -69,8 +79,19 @@ export default function Event() {
                         </Text>
                       </td>
                     </tr>
+                    <tr key="location">
+                      <td>
+                        <Text fw={700} fz="md">
+                          Location
+                        </Text>
+                      </td>
+                      <td>
+                        <Text fz="md">{event?.location}</Text>
+                      </td>
+                    </tr>
+
                     <tr key="status">
-                      <td style={{ width: "30%" }}>
+                      <td style={{ width: "20%" }}>
                         <Text fw={700} fz="md">
                           Agencies
                         </Text>
@@ -87,22 +108,29 @@ export default function Event() {
                         </Text>
                       </td>
                     </tr>
-                    <tr key="coutry">
+                    <tr key="country">
                       <td>
                         <Text fw={700} fz="md">
-                          Country
+                          Countries
                         </Text>
                       </td>
                       <td>
                         <Text fz="md">
                           {event?.agencies?.length > 0 ? (
-                            event?.agencies.map((agency) => {
-                              return (
-                                <Text>
-                                  {countries[agency?.country_code]?.name}
-                                </Text>
-                              );
-                            })
+                            (() => {
+                              const displayedCountries = new Set(); // Set to track displayed countries
+                              return event?.agencies.map((agency) => {
+                                const countryName =
+                                  countries[agency?.country_code]?.name;
+                                if (!displayedCountries.has(countryName)) {
+                                  displayedCountries.add(countryName); // Add to set if not already displayed
+                                  return (
+                                    <Text key={countryName}>{countryName}</Text>
+                                  );
+                                }
+                                return null; // Return null for duplicate countries
+                              });
+                            })()
                           ) : (
                             <></>
                           )}

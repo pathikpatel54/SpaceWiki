@@ -35,14 +35,7 @@ export default function Launch() {
   const space = useSelector(selectAllSpace);
   const user = useSelector(selectAllAuth);
   const matches = useMediaQuery("(min-width: 1200px)");
-  const {
-    launch,
-    launchidstatus,
-    sides,
-    sidesstatus,
-    alertstatus,
-    alerterror,
-  } = space;
+  const { launch, launchidstatus, sides, sidesstatus, alertstatus } = space;
 
   useEffect(() => {
     dispatch(fetchLaunch(id));
@@ -122,7 +115,7 @@ export default function Launch() {
                     fullWidth
                     radius="xs"
                     onClick={onSubscribeClick}
-                    variant="default"
+                    variant="light"
                   >
                     Subscribe to status updates
                   </Button>

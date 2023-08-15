@@ -114,31 +114,31 @@ const links = [
     link: "/events",
     label: "Events",
   },
-  {
-    link: "/agencies",
-    label: "Agencies",
-  },
-  {
-    label: "More",
-    links: [
-      {
-        link: "/astronauts",
-        label: "Astronauts",
-      },
-      {
-        link: "/space-stations",
-        label: "Space Stations",
-      },
-      {
-        link: "/expeditions",
-        label: "Expeditions",
-      },
-      {
-        link: "/dockings",
-        label: "Dockings",
-      },
-    ],
-  },
+  // {
+  //   link: "/agencies",
+  //   label: "Agencies",
+  // },
+  // {
+  //   label: "More",
+  //   links: [
+  //     {
+  //       link: "/astronauts",
+  //       label: "Astronauts",
+  //     },
+  //     {
+  //       link: "/space-stations",
+  //       label: "Space Stations",
+  //     },
+  //     {
+  //       link: "/expeditions",
+  //       label: "Expeditions",
+  //     },
+  //     {
+  //       link: "/dockings",
+  //       label: "Dockings",
+  //     },
+  //   ],
+  // },
 ];
 
 const UserButton = forwardRef(
