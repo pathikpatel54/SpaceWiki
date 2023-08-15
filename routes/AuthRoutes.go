@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"spacealert/config"
 	"spacealert/databases"
 	"spacealert/models"
