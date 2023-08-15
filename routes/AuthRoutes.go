@@ -106,7 +106,7 @@ func (ac *AuthController) Logout(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("session", "", -1, "/", "localhost", false, true)
+	c.SetCookie("session", "", -1, "/", c.Request.Host, false, true)
 	c.Redirect(http.StatusSeeOther, "/")
 }
 
@@ -145,7 +145,7 @@ func generateSession(user *models.User, c *gin.Context, ac *AuthController) {
 	sessionID, _ := utils.GenerateRandomString(20)
 
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("session", sessionID, (30 * 24 * 60 * 60), "/", "localhost", false, true)
+	c.SetCookie("session", sessionID, (30 * 24 * 60 * 60), "/", c.Request.Host, false, true)
 
 	query := `INSERT INTO users (google_id, email, verified_email, name, given_name, family_name, picture, locale) 
 			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -196,7 +196,7 @@ func isLoggedIn(c *gin.Context, db *sql.DB) (bool, *models.User) {
 	}
 
 	if session.Expires.Before(time.Now()) {
-		c.SetCookie("session", "", -1, "/", "localhost", false, true)
+		c.SetCookie("session", "", -1, "/", c.Request.Host, false, true)
 		_, err := db.Exec(`DELETE FROM sessions WHERE id = $1`, session.ID)
 
 		if err != nil {
